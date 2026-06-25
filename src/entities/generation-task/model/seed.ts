@@ -19,7 +19,8 @@ export const GENERATION_TASK_SEED: GenerationTask[] = [
   {
     id: "gt-2",
     type: "video",
-    prompt: "Кинематографичный трейлер: город в тумане, неоновые вывески, дождь",
+    prompt:
+      "Кинематографичный трейлер: город в тумане, неоновые вывески, дождь",
     model: "Kling",
     status: "running",
     progress: 34,
