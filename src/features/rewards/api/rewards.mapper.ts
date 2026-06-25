@@ -27,7 +27,9 @@ export function mapDailyCheckInDto(dto: DailyCheckInDto): DailyCheckInStatus {
     currentStreak: dto.current_streak,
     canClaim: dto.can_claim,
     todayRewardCredits: dto.today_reward_credits,
-    lastCheckInAt: dto.last_checkin_at ? new Date(dto.last_checkin_at) : undefined,
+    lastCheckInAt: dto.last_checkin_at
+      ? new Date(dto.last_checkin_at)
+      : undefined,
     days: dto.days.map(mapDailyRewardDayDto),
   };
 }
