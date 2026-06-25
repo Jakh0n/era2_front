@@ -60,7 +60,10 @@ function hydrateTasks(tasks: HydratedTask[]): GenerationTask[] {
   }));
 }
 
-export function queueReducer(state: QueueState = initialQueueState, action: QueueAction): QueueState {
+export function queueReducer(
+  state: QueueState = initialQueueState,
+  action: QueueAction,
+): QueueState {
   switch (action.type) {
     case "ADD_TASK": {
       const tasks = recomputeQueuePositions([...state.tasks, action.task]);
@@ -170,13 +173,19 @@ export function queueReducer(state: QueueState = initialQueueState, action: Queu
     }
 
     case "SET_FILTER":
-      return state.filter === action.filter ? state : { ...state, filter: action.filter };
+      return state.filter === action.filter
+        ? state
+        : { ...state, filter: action.filter };
 
     case "SET_SORT":
-      return state.sort === action.sort ? state : { ...state, sort: action.sort };
+      return state.sort === action.sort
+        ? state
+        : { ...state, sort: action.sort };
 
     case "SET_SEARCH":
-      return state.search === action.search ? state : { ...state, search: action.search };
+      return state.search === action.search
+        ? state
+        : { ...state, search: action.search };
 
     case "HYDRATE": {
       const tasks = recomputeQueuePositions(hydrateTasks(action.payload.tasks));
@@ -197,5 +206,9 @@ export function queueReducer(state: QueueState = initialQueueState, action: Queu
 }
 
 export { initialQueueState } from "./queueState";
-export type { QueueAction, QueueHydratePayload, HydratedTask } from "./queueActions";
+export type {
+  QueueAction,
+  QueueHydratePayload,
+  HydratedTask,
+} from "./queueActions";
 export type { QueueState, QueueSort, QueueStatusFilter } from "./queueState";
