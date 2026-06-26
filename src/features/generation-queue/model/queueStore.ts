@@ -5,7 +5,7 @@ import {
   initializeQueueState,
   QUEUE_LOAD_ERROR_MESSAGE,
 } from "../lib/queueInit";
-import { abortQueueTask } from "./queueEngineBinding";
+import { abortQueueTask, syncQueueEngine } from "./queueEngineBinding";
 import type { QueueAction } from "./queueActions";
 import { queueReducer } from "./queueReducer";
 import {
@@ -59,6 +59,7 @@ export function initializeQueueFromSeed(): void {
     } finally {
       if (attemptId === initAttempt) {
         useQueueStore.setState({ isLoading: false });
+        syncQueueEngine();
       }
     }
   }, INIT_DELAY_MS);
