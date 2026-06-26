@@ -12,9 +12,11 @@ export interface GenerationTask {
   progress: number;
   createdAt: Date;
   error?: string;
-  /** Estimated seconds until completion (queued / running). */
+  /** ETA in seconds (queued/running) or completed duration in seconds (done). */
   eta?: number;
   credits?: number;
   /** 1-based position in queue (queued only). */
   queuePosition?: number;
+  /** Set when task enters running — used to compute done duration. */
+  startedAt?: Date;
 }

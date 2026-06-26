@@ -2,8 +2,9 @@ import type { GenerationTask } from "@/entities/generation-task";
 import type { QueueSort, QueueState, QueueStatusFilter } from "./queueState";
 
 /** Serializable task shape for localStorage hydration. */
-export type HydratedTask = Omit<GenerationTask, "createdAt"> & {
+export type HydratedTask = Omit<GenerationTask, "createdAt" | "startedAt"> & {
   createdAt: string | Date;
+  startedAt?: string | Date;
 };
 
 export interface QueueHydratePayload {

@@ -13,17 +13,29 @@
  */
 export const queueTheme = {
   cardShell:
-    "rounded-2xl border border-era-line bg-era-bg-1 transition-colors hover:border-era-form-border",
+    "rounded-[16px] border border-era-line bg-era-bg-1 transition-colors hover:border-era-form-border",
+  cardShellActive:
+    "border-era-accent hover:border-era-accent",
   statusBarShell:
-    "rounded-2xl border border-era-line bg-era-bg-1 transition-colors hover:border-era-form-border shadow-[0_12px_40px_rgba(0,0,0,0.45)]",
-  typeIconShell:
-    "border border-era-accent/20 bg-era-accent/10 text-era-accent",
+    "rounded-[16px] border border-era-line bg-era-bg-1 transition-colors hover:border-era-form-border shadow-[0_12px_40px_rgba(0,0,0,0.45)]",
+  previewShell:
+    "overflow-hidden border border-era-accent/20 era-queue-preview-bg",
+  /** Task preview / type icon — Figma radius 16px */
+  previewRadius: "!rounded-[16px]",
+  /** Status bar mini preview (32px) */
+  previewRadiusSm: "!rounded-[10px]",
   iconButton:
-    "size-8 shrink-0 rounded-[8px] border border-era-line bg-era-bg-1 text-era-fg-dim hover:text-era-fg hover:border-era-form-border hover:bg-era-bg-2",
+    "size-8 shrink-0 cursor-pointer rounded-[8px] border border-era-line bg-era-bg-1 text-era-fg-dim hover:text-era-fg hover:border-era-form-border hover:bg-era-bg-2",
   accentIconButton:
-    "size-8 shrink-0 rounded-[8px] border border-era-line bg-era-bg-1 text-era-accent-2 hover:text-era-accent-hi hover:border-era-form-border hover:bg-era-bg-2",
+    "size-8 shrink-0 cursor-pointer rounded-[8px] border border-era-line bg-era-bg-1 text-era-accent-2 hover:text-era-accent-hi hover:border-era-form-border hover:bg-era-bg-2",
   inputShell:
     "rounded-full border-era-form-border bg-era-bg-1 text-era-fg placeholder:text-era-fg-mute",
   dropdownShell: "border-era-form-border bg-era-bg-1 text-era-fg",
   skeleton: "bg-era-line",
+  filterChipActive:
+    "cursor-pointer border-era-accent bg-era-accent text-white hover:bg-era-accent hover:text-white",
+  filterChipIdle:
+    "cursor-pointer border-era-line bg-era-bg-2 text-era-fg-mute hover:border-era-form-border hover:text-era-fg",
+  sortTrigger:
+    "h-7 w-auto shrink-0 cursor-pointer gap-1.5 rounded-full border border-era-line bg-era-bg-2 px-3.5 text-[13px] font-medium text-era-fg-mute shadow-none focus:ring-0 focus:ring-offset-0 [&>svg]:size-3.5 [&>svg]:opacity-60",
 } as const;

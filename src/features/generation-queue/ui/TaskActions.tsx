@@ -1,6 +1,5 @@
 import { ArrowDownToLine, MoreHorizontal, RotateCw, X } from "lucide-react";
 import type { TaskStatus } from "@/entities/generation-task";
-import { Button } from "@/shared/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,9 +19,15 @@ export interface TaskActionsProps {
   className?: string;
 }
 
-const iconButtonClass = queueTheme.iconButton;
+const iconButtonClass = cn(
+  queueTheme.iconButton,
+  "inline-flex items-center justify-center transition-colors",
+);
 
-const accentActionButtonClass = queueTheme.accentIconButton;
+const accentActionButtonClass = cn(
+  queueTheme.accentIconButton,
+  "inline-flex items-center justify-center transition-colors",
+);
 
 export function TaskActions({
   status,
@@ -32,60 +37,53 @@ export function TaskActions({
   onDelete,
   className,
 }: TaskActionsProps) {
-  const { showCancel, showRetry, showDownload } = getTaskActionVisibility(status);
+  const { showCancel, showRetry, showDownload } =
+    getTaskActionVisibility(status);
 
   return (
     <div className={cn("flex items-center gap-1.5", className)}>
       {showCancel && (
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon"
-          className={iconButtonClass}
+          className={cn(iconButtonClass, "text-era-fg-mute hover:text-era-fg-dim")}
           aria-label="Отменить"
           onClick={onCancel}
         >
-          <X className="size-4" />
-        </Button>
+          <X className="size-4" strokeWidth={1.75} />
+        </button>
       )}
 
       {showRetry && (
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon"
           className={accentActionButtonClass}
           aria-label="Повторить"
           onClick={onRetry}
         >
           <RotateCw className="size-4" strokeWidth={1.75} />
-        </Button>
+        </button>
       )}
 
       {showDownload && (
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon"
           className={accentActionButtonClass}
           aria-label="Скачать"
           onClick={onDownload}
         >
           <ArrowDownToLine className="size-4" strokeWidth={1.75} />
-        </Button>
+        </button>
       )}
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            size="icon"
-            className={iconButtonClass}
+            className={cn(iconButtonClass, "text-era-fg-mute hover:text-era-fg-dim")}
             aria-label="Ещё"
           >
-            <MoreHorizontal className="size-4" />
-          </Button>
+            <MoreHorizontal className="size-4" strokeWidth={1.75} />
+          </button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent

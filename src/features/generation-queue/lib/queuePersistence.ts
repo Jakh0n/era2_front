@@ -89,6 +89,13 @@ function isHydratedTask(value: unknown): value is HydratedTask {
   ) {
     return false;
   }
+  if (
+    value.startedAt !== undefined &&
+    typeof value.startedAt !== "string" &&
+    !(value.startedAt instanceof Date)
+  ) {
+    return false;
+  }
 
   return true;
 }
@@ -161,6 +168,7 @@ export function writePersistedState(state: QueueState): void {
     tasks: state.tasks.map((task) => ({
       ...task,
       createdAt: task.createdAt.toISOString(),
+      startedAt: task.startedAt?.toISOString(),
     })),
     filter: state.filter,
     sort: state.sort,

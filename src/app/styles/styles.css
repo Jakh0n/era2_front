@@ -354,6 +354,14 @@
   .era-ph-rust  { background: repeating-linear-gradient(135deg, #2a130a 0 14px, #1a0b05 14px 28px); }
   .era-ph-coal  { background: repeating-linear-gradient(135deg, #15120f 0 14px, #0c0a08 14px 28px); }
   .era-ph-ember { background: repeating-linear-gradient(135deg, #3a1a0a 0 14px, #210d04 14px 28px); }
+  /* Queue task preview — Figma: accent-soft → bg-2 */
+  .era-queue-preview-bg {
+    background: linear-gradient(
+      to bottom right,
+      var(--c-accent-soft) 0%,
+      var(--c-bg-2) 100%
+    );
+  }
 }
 
 .scrollbar-thin {

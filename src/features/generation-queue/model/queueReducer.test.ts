@@ -81,11 +81,21 @@ describe("queueReducer", () => {
       expect(taskById(next, "failed").progress).toBe(40);
     });
 
-    it("completes only running tasks", () => {
+    it("completes only running tasks and stores done duration", () => {
+      const startedAt = new Date(Date.now() - 12_000);
       const hydrated = [
-        makeTask({ id: "running", status: "running", progress: 90 }),
+        makeTask({
+          id: "running",
+          status: "running",
+          progress: 90,
+          startedAt,
+        }),
         makeTask({ id: "queued", status: "queued", progress: 0, queuePosition: 1 }),
-      ].map((task) => ({ ...task, createdAt: task.createdAt.toISOString() }));
+      ].map((task) => ({
+        ...task,
+        createdAt: task.createdAt.toISOString(),
+        startedAt: task.startedAt?.toISOString(),
+      }));
 
       const state = queueReducer(initialQueueState, {
         type: "HYDRATE",
@@ -101,7 +111,8 @@ describe("queueReducer", () => {
       expect(taskById(next, "running")).toMatchObject({
         status: "done",
         progress: 100,
-        eta: undefined,
+        eta: 12,
+        startedAt: undefined,
       });
       expect(taskById(next, "queued").status).toBe("queued");
     });

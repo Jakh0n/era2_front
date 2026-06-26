@@ -20,19 +20,28 @@ export function getTaskActionVisibility(status: TaskStatus): TaskActionVisibilit
   };
 }
 
-export function getTaskMetaParts(task: GenerationTask): string[] {
-  const parts: string[] = [];
+export type TaskMetaPart = {
+  text: string;
+  className?: string;
+  mono?: boolean;
+};
+
+export function getTaskMetaParts(task: GenerationTask): TaskMetaPart[] {
+  const parts: TaskMetaPart[] = [];
 
   if (task.status === "queued" && task.queuePosition !== undefined) {
-    parts.push(formatQueuePosition(task.queuePosition));
+    parts.push({ text: formatQueuePosition(task.queuePosition) });
   } else if (task.status === "running" && task.eta !== undefined) {
-    parts.push(formatEta(task.eta));
+    parts.push({ text: formatEta(task.eta), mono: true });
   } else if (task.status === "done" && task.eta !== undefined) {
-    parts.push(formatDoneDuration(task.eta));
+    parts.push({
+      text: formatDoneDuration(task.eta),
+      className: "text-[12px] text-era-fg-mute",
+    });
   }
 
   if (task.credits !== undefined) {
-    parts.push(formatCredits(task.credits));
+    parts.push({ text: formatCredits(task.credits), mono: true });
   }
 
   return parts;
@@ -40,6 +49,20 @@ export function getTaskMetaParts(task: GenerationTask): string[] {
 
 export function formatTaskError(error: string): string {
   return error.toLowerCase();
+}
+
+export function getTaskStatusMetaMessage(
+  task: GenerationTask,
+): { text: string } | null {
+  if (task.status === "failed" && task.error) {
+    return { text: formatTaskError(task.error) };
+  }
+
+  if (task.status === "canceled") {
+    return { text: "отменено пользователем" };
+  }
+
+  return null;
 }
 
 export function canClearDoneTasks(doneCount: number): boolean {

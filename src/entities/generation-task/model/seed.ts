@@ -72,6 +72,7 @@ export const GENERATION_TASK_SEED: GenerationTask[] = [
     status: "done",
     progress: 100,
     createdAt: minutesAgo(12),
+    eta: 12,
     credits: 25,
   },
   {
@@ -82,6 +83,7 @@ export const GENERATION_TASK_SEED: GenerationTask[] = [
     status: "done",
     progress: 100,
     createdAt: minutesAgo(28),
+    eta: 22,
     credits: 6,
   },
   {

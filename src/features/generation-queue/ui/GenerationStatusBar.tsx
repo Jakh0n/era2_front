@@ -4,6 +4,7 @@ import type { GenerationTask } from "@/entities/generation-task";
 import { Link, useNavigate } from "@/shared/routing";
 import { cn } from "@/shared/lib/utils";
 import { TYPE_LABELS } from "../lib/queueLabels";
+import { queueTheme } from "../lib/queueTheme";
 import { useQueue } from "../model/useQueue";
 import { ProgressBar } from "./ProgressBar";
 import { statusBarShellClass, TaskPreview } from "./taskItemShared";
@@ -20,7 +21,7 @@ function StatusBarSpinner({ className }: { className?: string }) {
 function MiniTaskRow({ task }: { task: GenerationTask }) {
   return (
     <div className="flex items-center gap-2.5 min-h-[40px]">
-      <TaskPreview task={task} className="size-8 rounded-lg" />
+      <TaskPreview task={task} className={cn("size-8", queueTheme.previewRadiusSm)} />
       <div className="min-w-0 flex-1 space-y-1.5">
         <p className="truncate text-[13px] font-medium text-era-fg">{task.prompt}</p>
         <ProgressBar
@@ -42,7 +43,10 @@ function SingleTaskCard({ task, onOpenQueue }: { task: GenerationTask; onOpenQue
     <button
       type="button"
       onClick={onOpenQueue}
-      className={cn(statusBarShellClass, "w-full p-4 text-left hover:border-era-form-border")}
+      className={cn(
+        statusBarShellClass,
+        "w-full cursor-pointer p-4 text-left hover:border-era-form-border",
+      )}
     >
       <div className="flex items-start gap-3">
         <StatusBarSpinner />
@@ -79,7 +83,7 @@ function MultiTaskPanel({
         onClick={onToggleCollapse}
         className={cn(
           statusBarShellClass,
-          "inline-flex items-center gap-2 px-4 py-2.5",
+          "inline-flex cursor-pointer items-center gap-2 px-4 py-2.5",
           "font-mono text-[13px] tabular-nums text-era-fg",
           "hover:border-era-form-border",
         )}
@@ -97,7 +101,7 @@ function MultiTaskPanel({
         <button
           type="button"
           onClick={onOpenQueue}
-          className="min-w-0 flex-1 text-left"
+          className="min-w-0 flex-1 cursor-pointer text-left"
         >
           <p className="text-[14px] font-medium leading-snug text-era-fg">
             Генерации идут · {activeCount} активны · {averageProgress}%
@@ -106,7 +110,7 @@ function MultiTaskPanel({
         <button
           type="button"
           onClick={onToggleCollapse}
-          className="shrink-0 rounded-[8px] p-1 text-era-fg-mute hover:bg-era-bg-2 hover:text-era-fg"
+          className="shrink-0 cursor-pointer rounded-[8px] p-1 text-era-fg-mute hover:bg-era-bg-2 hover:text-era-fg"
           aria-label="Свернуть"
         >
           <ChevronDown className="size-4" />
@@ -126,7 +130,7 @@ function MultiTaskPanel({
             event.preventDefault();
             onOpenQueue();
           }}
-          className="inline-flex text-[13px] font-medium text-era-accent-2 hover:text-era-accent-hi"
+          className="inline-flex cursor-pointer text-[13px] font-medium text-era-accent-2 hover:text-era-accent-hi"
         >
           Открыть очередь →
         </Link>

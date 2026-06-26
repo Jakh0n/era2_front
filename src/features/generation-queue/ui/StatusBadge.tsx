@@ -10,11 +10,7 @@ export interface StatusBadgeProps {
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   return (
     <span
-      className={cn(
-        "text-[13px] font-medium leading-none whitespace-nowrap",
-        STATUS_STYLES[status],
-        className,
-      )}
+      className={cn(STATUS_STYLES[status], className)}
     >
       {STATUS_LABELS[status]}
     </span>

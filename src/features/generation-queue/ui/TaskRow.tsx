@@ -8,9 +8,8 @@ import {
   TaskPrompt,
   TaskProgressPercent,
   TaskRunningProgress,
-  TaskStatusMessages,
   TaskItemActions,
-  taskItemShellClass,
+  getTaskItemShellClass,
 } from "./taskItemShared";
 
 export type TaskRowProps = TaskItemProps;
@@ -29,28 +28,27 @@ export function TaskRow({
   return (
     <article
       className={cn(
-        taskItemShellClass,
-        "hidden items-center gap-4 px-4 py-3.5 min-[1024px]:flex",
+        getTaskItemShellClass(task.status),
+        "hidden items-start gap-4 px-4 py-3.5 min-[1024px]:flex",
         className,
       )}
     >
-      <TaskPreview task={task} />
+      <TaskPreview task={task} className="mt-0.5" />
 
-      <div className="min-w-0 flex-1 space-y-2">
-        <TaskPrompt prompt={task.prompt} />
-        <TaskMetaLine task={task} />
-        <TaskStatusMessages task={task} />
-        {isRunning && (
-          <TaskRunningProgress task={task} className="max-w-md" />
-        )}
-      </div>
-
-      <div className="flex shrink-0 items-center gap-4">
-        <div className="flex min-w-[5.5rem] flex-col items-end gap-1">
-          {isRunning && <TaskProgressPercent progress={task.progress} />}
-          <StatusBadge status={task.status} />
+      <div className="flex min-w-0 flex-1 items-start gap-4">
+        <div className="min-w-0 flex-1 space-y-2">
+          <TaskPrompt prompt={task.prompt} />
+          <TaskMetaLine task={task} />
+          {isRunning && <TaskRunningProgress task={task} />}
         </div>
-        <TaskItemActions task={task} callbacks={callbacks} />
+
+        <div className="flex shrink-0 items-center gap-3 pt-0.5">
+          <div className="flex items-center gap-1">
+            {isRunning && <TaskProgressPercent progress={task.progress} />}
+            <StatusBadge status={task.status} />
+          </div>
+          <TaskItemActions task={task} callbacks={callbacks} />
+        </div>
       </div>
     </article>
   );

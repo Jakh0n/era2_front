@@ -8,6 +8,19 @@ function parseCreatedAt(value: string | Date): Date {
   return value instanceof Date ? value : new Date(value);
 }
 
+function parseOptionalDate(value: string | Date | undefined): Date | undefined {
+  if (value === undefined) return undefined;
+  return value instanceof Date ? value : new Date(value);
+}
+
+function computeDoneDurationSec(task: GenerationTask, now = Date.now()): number {
+  if (task.startedAt) {
+    return Math.max(1, Math.round((now - task.startedAt.getTime()) / 1000));
+  }
+
+  return Math.max(1, Math.round((task.credits ?? 10) / 2));
+}
+
 function withoutQueuePosition(task: GenerationTask): GenerationTask {
   if (task.queuePosition === undefined) return task;
   const { queuePosition: _removed, ...rest } = task;
@@ -54,6 +67,7 @@ function hydrateTasks(tasks: HydratedTask[]): GenerationTask[] {
   return tasks.map((task) => ({
     ...task,
     createdAt: parseCreatedAt(task.createdAt),
+    startedAt: parseOptionalDate(task.startedAt),
   }));
 }
 
@@ -76,12 +90,17 @@ export function queueReducer(
             status: "running",
             progress,
             error: undefined,
+            startedAt: task.startedAt ?? new Date(),
           });
         }
 
         if (task.status !== "running") return task;
 
-        return { ...task, progress };
+        return {
+          ...task,
+          progress,
+          startedAt: task.startedAt ?? new Date(),
+        };
       });
 
       return tasks === state.tasks ? state : { ...state, tasks };
@@ -96,7 +115,8 @@ export function queueReducer(
           status: "done",
           progress: 100,
           error: undefined,
-          eta: undefined,
+          eta: computeDoneDurationSec(task),
+          startedAt: undefined,
         });
       });
 
@@ -112,6 +132,7 @@ export function queueReducer(
           status: "failed",
           error: action.error,
           eta: undefined,
+          startedAt: undefined,
         });
       });
 
@@ -126,6 +147,7 @@ export function queueReducer(
           ...task,
           status: "canceled",
           eta: undefined,
+          startedAt: undefined,
         });
       });
 
@@ -143,6 +165,7 @@ export function queueReducer(
           progress: 0,
           error: undefined,
           eta: undefined,
+          startedAt: undefined,
         };
       });
 

@@ -1,7 +1,4 @@
-import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
 import { Chip } from "@/shared/ui/era";
-import { Input } from "@/shared/ui/input";
 import {
   Select,
   SelectContent,
@@ -10,77 +7,51 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { cn } from "@/shared/lib/utils";
-import { SEARCH_DEBOUNCE_MS } from "../lib/queueConstants";
 import { FILTER_OPTIONS } from "../lib/queueLabels";
 import { queueTheme } from "../lib/queueTheme";
-import { isQueueSort, type QueueSort, type QueueStatusFilter } from "../lib/queueTypes";
+import {
+  isQueueSort,
+  type QueueSort,
+  type QueueStatusFilter,
+} from "../lib/queueTypes";
 
 export interface QueueToolbarProps {
   filter: QueueStatusFilter;
   sort: QueueSort;
-  search: string;
   onFilterChange: (filter: QueueStatusFilter) => void;
   onSortChange: (sort: QueueSort) => void;
-  onSearchChange: (search: string) => void;
   className?: string;
 }
 
 export function QueueToolbar({
   filter,
   sort,
-  search,
   onFilterChange,
   onSortChange,
-  onSearchChange,
   className,
 }: QueueToolbarProps) {
-  const [searchInput, setSearchInput] = useState(search);
-
-  useEffect(() => {
-    setSearchInput(search);
-  }, [search]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      if (searchInput !== search) {
-        onSearchChange(searchInput);
-      }
-    }, SEARCH_DEBOUNCE_MS);
-
-    return () => window.clearTimeout(timer);
-  }, [searchInput, search, onSearchChange]);
-
   return (
-    <div className={cn("space-y-3", className)}>
-      <div className="-mx-1 overflow-x-auto px-1 pb-1">
-        <div className="flex w-max min-w-full items-center gap-2">
-          {FILTER_OPTIONS.map((option) => (
+    <div className={cn("-mx-1 overflow-x-auto px-1 pb-0.5 scrollbar-hide", className)}>
+      <div className="flex w-max items-center gap-2">
+        {FILTER_OPTIONS.map((option) => {
+          const isActive = filter === option.value;
+
+          return (
             <Chip
               key={option.value}
-              active={filter === option.value}
+              active={isActive}
               onClick={() => onFilterChange(option.value)}
               className={cn(
-                filter === option.value &&
-                  "bg-era-accent-soft border-era-accent text-era-accent-2",
+                "h-7 shrink-0 px-3.5 shadow-none",
+                isActive
+                  ? queueTheme.filterChipActive
+                  : queueTheme.filterChipIdle,
               )}
             >
               {option.label}
             </Chip>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-era-fg-mute" />
-          <Input
-            type="search"
-            value={searchInput}
-            onChange={(event) => setSearchInput(event.target.value)}
-            placeholder="Поиск по промпту"
-            className={cn("h-9 pl-9", queueTheme.inputShell)}
-          />
-        </div>
+          );
+        })}
 
         <Select
           value={sort}
@@ -88,9 +59,7 @@ export function QueueToolbar({
             if (isQueueSort(value)) onSortChange(value);
           }}
         >
-          <SelectTrigger
-            className={cn("h-9 w-full sm:w-[200px]", queueTheme.inputShell)}
-          >
+          <SelectTrigger className={cn(queueTheme.sortTrigger, "ml-6")}>
             <SelectValue placeholder="Сортировка" />
           </SelectTrigger>
           <SelectContent className={queueTheme.dropdownShell}>

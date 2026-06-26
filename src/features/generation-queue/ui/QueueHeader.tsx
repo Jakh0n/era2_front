@@ -46,8 +46,9 @@ export function QueueHeader({ doneCount, onClearDone, className }: QueueHeaderPr
             variant="outline"
             disabled={!canClear}
             className={cn(
-              "shrink-0 rounded-full border-era-form-border bg-transparent px-4",
+              "shrink-0 cursor-pointer rounded-full border-era-form-border bg-transparent px-4",
               "text-era-fg-dim hover:bg-era-bg-2 hover:text-era-fg",
+              "disabled:cursor-not-allowed",
             )}
           >
             Очистить готовые

@@ -10,11 +10,16 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
 };
 
 export const STATUS_STYLES: Record<TaskStatus, string> = {
-  queued: "text-era-fg-mute",
-  running: "text-era-accent",
-  done: "text-emerald-400",
-  failed: "text-era-destructive",
-  canceled: "text-era-fg-low",
+  queued:
+    "inline-flex items-center rounded-[8px] border border-era-line bg-era-bg-2 px-2.5 py-1 text-[13px] font-medium text-era-fg-mute",
+  running:
+    "inline-flex items-center rounded-[8px] bg-era-accent-soft px-2.5 py-1 text-[13px] font-medium text-era-accent-2",
+  done:
+    "inline-flex items-center rounded-[8px] border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-[13px] font-medium text-emerald-400",
+  failed:
+    "inline-flex items-center rounded-[8px] border border-era-destructive/30 bg-era-destructive/10 px-2.5 py-1 text-[13px] font-medium text-era-destructive",
+  canceled:
+    "inline-flex items-center rounded-[8px] border border-era-line px-2.5 py-1 text-[13px] font-medium text-era-fg-low",
 };
 
 export const TYPE_LABELS: Record<GenType, string> = {

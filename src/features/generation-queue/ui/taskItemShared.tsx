@@ -1,8 +1,12 @@
+import { Fragment } from "react";
 import { Image as ImageIcon, MessageSquare, Mic, Video } from "lucide-react";
-import type { GenType, GenerationTask } from "@/entities/generation-task";
-import { Placeholder } from "@/shared/ui/era";
+import type {
+  GenType,
+  GenerationTask,
+  TaskStatus,
+} from "@/entities/generation-task";
 import { cn } from "@/shared/lib/utils";
-import { getTaskMetaParts, formatTaskError } from "../lib/taskRules";
+import { getTaskMetaParts, getTaskStatusMetaMessage } from "../lib/taskRules";
 import { queueTheme } from "../lib/queueTheme";
 import { ProgressBar } from "./ProgressBar";
 import { StatusBadge } from "./StatusBadge";
@@ -27,7 +31,13 @@ const TYPE_ICONS: Record<GenType, typeof MessageSquare> = {
   audio: Mic,
 };
 
-export const taskItemShellClass = queueTheme.cardShell;
+export function getTaskItemShellClass(status: TaskStatus, className?: string) {
+  return cn(
+    queueTheme.cardShell,
+    status === "running" && queueTheme.cardShellActive,
+    className,
+  );
+}
 
 export const statusBarShellClass = queueTheme.statusBarShell;
 
@@ -38,23 +48,15 @@ export function TaskPreview({
   task: GenerationTask;
   className?: string;
 }) {
-  if (task.type === "image" || task.type === "video") {
-    return (
-      <Placeholder
-        aspect="1/1"
-        tone="rust"
-        className={cn("size-11 shrink-0 rounded-xl", className)}
-      />
-    );
-  }
-
   const Icon = TYPE_ICONS[task.type];
 
   return (
     <span
       className={cn(
-        "inline-flex size-11 shrink-0 items-center justify-center rounded-xl",
-        queueTheme.typeIconShell,
+        "relative inline-flex size-11 shrink-0 items-center justify-center",
+        queueTheme.previewRadius,
+        queueTheme.previewShell,
+        "text-era-accent",
         className,
       )}
     >
@@ -102,21 +104,38 @@ export function TaskMetaLine({
   className?: string;
 }) {
   const metaParts = getTaskMetaParts(task);
+  const statusMessage = getTaskStatusMetaMessage(task);
 
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-era-fg-mute",
+        "flex min-w-0 flex-nowrap items-center gap-x-1.5 overflow-hidden text-[13px] text-era-fg-mute",
         className,
       )}
     >
-      <TaskModelPill model={task.model} />
+      <TaskModelPill model={task.model} className="shrink-0" />
       {metaParts.map((part) => (
-        <span key={part} className="inline-flex items-center gap-2">
+        <Fragment key={part.text}>
           <MetaDot />
-          <span className="font-mono tabular-nums">{part}</span>
-        </span>
+          <span
+            className={cn(
+              "shrink-0",
+              part.mono && "font-mono tabular-nums",
+              part.className,
+            )}
+          >
+            {part.text}
+          </span>
+        </Fragment>
       ))}
+      {statusMessage && (
+        <>
+          <MetaDot />
+          <span className="shrink-0 text-[12px] text-era-fg-low">
+            {statusMessage.text}
+          </span>
+        </>
+      )}
     </div>
   );
 }
@@ -141,40 +160,6 @@ export function TaskPrompt({
   );
 }
 
-export function TaskErrorText({
-  error,
-  className,
-}: {
-  error?: string;
-  className?: string;
-}) {
-  if (!error) return null;
-
-  return (
-    <p className={cn("text-[13px] text-era-destructive/90", className)}>
-      {formatTaskError(error)}
-    </p>
-  );
-}
-
-export function TaskCanceledText({ className }: { className?: string }) {
-  return (
-    <p className={cn("text-[13px] text-era-fg-low", className)}>
-      отменено пользователем
-    </p>
-  );
-}
-
-export function TaskStatusMessages({ task }: { task: GenerationTask }) {
-  if (task.status === "failed") {
-    return <TaskErrorText error={task.error} />;
-  }
-  if (task.status === "canceled") {
-    return <TaskCanceledText />;
-  }
-  return null;
-}
-
 export function TaskProgressPercent({
   progress,
   className,
@@ -185,7 +170,7 @@ export function TaskProgressPercent({
   return (
     <span
       className={cn(
-        "font-mono text-[13px] tabular-nums text-era-accent",
+        "inline-block min-w-[3rem] shrink-0 text-right font-mono text-[13px] tabular-nums text-era-accent",
         className,
       )}
     >
@@ -209,7 +194,7 @@ export function TaskRunningProgress({
     <ProgressBar
       value={task.progress}
       showPercent={false}
-      className={className}
+      className={cn("w-full", className)}
       barClassName={barClassName}
     />
   );

@@ -20,7 +20,7 @@ const COPY: Record<
   },
   filtered: {
     title: "Ничего не найдено",
-    description: "Попробуйте изменить фильтр или поисковый запрос.",
+    description: "Попробуйте изменить фильтр.",
     icon: SearchX,
   },
 };

@@ -18,12 +18,10 @@ function GenerationQueueContent() {
     taskCount,
     filter,
     sort,
-    search,
     isLoading,
     loadError,
     setFilter,
     setSort,
-    setSearch,
     cancel,
     retry,
     deleteTask,
@@ -50,10 +48,8 @@ function GenerationQueueContent() {
       <QueueToolbar
         filter={filter}
         sort={sort}
-        search={search}
         onFilterChange={setFilter}
         onSortChange={setSort}
-        onSearchChange={setSearch}
       />
 
       {tasks.length === 0 ? (

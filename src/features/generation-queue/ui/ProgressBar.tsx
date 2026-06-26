@@ -20,7 +20,7 @@ export function ProgressBar({
   const clamped = clampProgress(value);
 
   return (
-    <div className={cn("flex items-center gap-3 min-w-0", className)}>
+    <div className={cn("flex w-full min-w-0 items-center gap-3", className)}>
       {showPercent && (
         <span
           className={cn(
