@@ -48,8 +48,8 @@ yarn build       # production-сборка
 ### §4.3 — Тулбар
 
 - Фильтр по статусу (чипы) — `ui/QueueToolbar.tsx`
-- Сортировка: сначала новые / старые
-- Поиск по промпту с debounce 300 ms
+- Сортировка: сначала новые / старые — там же
+- Поиск по промпту с debounce 300 ms — input справа от сортировки (desktop: одна строка; mobile: чипы сверху, поиск + sort снизу)
 
 ### §4.4 — Список задач
 
@@ -63,7 +63,7 @@ yarn build       # production-сборка
 | Состояние                        | Компонент                 | Как проверить                          |
 | -------------------------------- | ------------------------- | -------------------------------------- |
 | Загрузка (~600 ms)               | `states/LoadingState.tsx` | Открыть `/queue`                       |
-| Пустое / нет результатов фильтра | `states/EmptyState.tsx`   | Очистить все задачи или сузить фильтр  |
+| Пустое / нет результатов фильтра | `states/EmptyState.tsx`   | Очистить все задачи, сузить фильтр или поиск |
 | Ошибка загрузки                  | `states/ErrorState.tsx`   | `/queue?failQueueLoad=1` → «Повторить» |
 
 ### §4.6 — Адаптив
@@ -89,8 +89,8 @@ yarn build       # production-сборка
 
 ### Бонус (§6)
 
-- **15 unit-тестов** (vitest): `model/queueReducer.test.ts`, `model/queueEngine.test.ts`
-- Покрытие: лимит слотов, FIFO, cancel, переходы статусов, COMPLETE / FAIL
+- **18 unit-тестов** (vitest): `model/queueReducer.test.ts`, `model/queueEngine.test.ts`, `lib/taskRules.test.ts`
+- Покрытие: лимит слотов, FIFO, cancel, переходы статусов, COMPLETE / FAIL, мета-данные задач
 
 ---
 
@@ -155,6 +155,7 @@ yarn test
 | ---------------------------- | -------------------------------------------- |
 | `model/queueReducer.test.ts` | Переходы статусов, позиции в очереди         |
 | `model/queueEngine.test.ts`  | Лимит 2 слота, FIFO, cancel, COMPLETE / FAIL |
+| `lib/taskRules.test.ts`      | Мета-строки: позиция, ETA, длительность      |
 
 Тесты лежат рядом с исходниками (colocated) — внутри FSD-слайса `features/generation-queue`.
 
@@ -167,6 +168,22 @@ yarn test
 3. `/queue?failQueueLoad=1` — ошибка + «Повторить»
 4. `yarn test` — 18/18
 5. `yarn build` — без ошибок
+6. Production: `/queue` открывается напрямую (см. раздел «Деплой»)
+
+---
+
+## Деплой (Vercel)
+
+SPA-роутинг настроен через `vercel.json` в корне frontend — все пути (`/queue`, `/text`, …) отдают `index.html`.
+
+| Настройка Vercel   | Значение     |
+| ------------------ | ------------ |
+| Root Directory     | `.` (frontend) |
+| Framework Preset   | Vite         |
+| Build Command      | `yarn build` |
+| Output Directory   | `dist`       |
+
+После push выполните redeploy. Прямой переход на `https://<domain>/queue` не должен возвращать 404.
 
 ---
 

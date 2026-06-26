@@ -7,9 +7,9 @@ import {
   QueueStatsCards,
   QueueToolbar,
   TaskListItem,
+  queueTheme,
   useQueue,
 } from "@/features/generation-queue";
-import { queueTheme } from "@/features/generation-queue/lib/queueTheme";
 
 function GenerationQueueContent() {
   const {
@@ -18,10 +18,12 @@ function GenerationQueueContent() {
     taskCount,
     filter,
     sort,
+    search,
     isLoading,
     loadError,
     setFilter,
     setSort,
+    setSearch,
     cancel,
     retry,
     deleteTask,
@@ -52,8 +54,10 @@ function GenerationQueueContent() {
       <QueueToolbar
         filter={filter}
         sort={sort}
+        search={search}
         onFilterChange={setFilter}
         onSortChange={setSort}
+        onSearchChange={setSearch}
       />
 
       {tasks.length === 0 ? (

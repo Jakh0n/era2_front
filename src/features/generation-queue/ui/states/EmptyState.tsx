@@ -1,6 +1,5 @@
 import { Inbox, SearchX } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-import { queueTheme } from "../lib/queueTheme";
 
 export type EmptyStateVariant = "empty" | "filtered";
 
@@ -20,7 +19,7 @@ const COPY: Record<
   },
   filtered: {
     title: "Ничего не найдено",
-    description: "Попробуйте изменить фильтр.",
+    description: "Попробуйте изменить фильтр или поисковый запрос.",
     icon: SearchX,
   },
 };

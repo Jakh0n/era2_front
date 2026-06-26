@@ -48,21 +48,32 @@ function StatSkeleton() {
 
 function ToolbarSkeleton() {
   return (
-    <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scrollbar-hide md:mx-0 md:px-0">
-      <div className="flex w-max items-center gap-2">
-        {["w-12", "w-24", "w-14", "w-16", "w-16"].map((width, index) => (
-          <Skeleton
-            key={index}
-            className={cn(
-              "h-7 shrink-0 rounded-full",
-              width,
-              queueTheme.skeleton,
-            )}
-          />
-        ))}
+    <div className="flex flex-col gap-3 min-[1024px]:flex-row min-[1024px]:items-center min-[1024px]:gap-4">
+      <div className="-mx-1 min-w-0 flex-1 overflow-x-auto px-1 pb-0.5 scrollbar-hide min-[1024px]:mx-0 min-[1024px]:px-0">
+        <div className="flex w-max items-center gap-2">
+          {["w-12", "w-24", "w-14", "w-16", "w-16"].map((width, index) => (
+            <Skeleton
+              key={index}
+              className={cn(
+                "h-7 shrink-0 rounded-full",
+                width,
+                queueTheme.skeleton,
+              )}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-2 min-[1024px]:ml-auto">
         <Skeleton
           className={cn(
-            "ml-6 h-7 w-36 shrink-0 rounded-full",
+            "h-7 min-w-0 flex-1 rounded-full min-[1024px]:w-52 min-[1024px]:flex-none min-[1280px]:w-60",
+            queueTheme.skeleton,
+          )}
+        />
+        <Skeleton
+          className={cn(
+            "h-7 w-[8.5rem] shrink-0 rounded-full",
             queueTheme.skeleton,
           )}
         />

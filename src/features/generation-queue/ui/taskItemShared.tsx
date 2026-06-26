@@ -9,7 +9,6 @@ import { cn } from "@/shared/lib/utils";
 import { getTaskMetaParts, getTaskStatusMetaMessage } from "../lib/taskRules";
 import { queueTheme } from "../lib/queueTheme";
 import { ProgressBar } from "./ProgressBar";
-import { StatusBadge } from "./StatusBadge";
 import { TaskActions } from "./TaskActions";
 
 export interface TaskItemCallbacks {

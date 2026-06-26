@@ -48,7 +48,7 @@ export function getTaskMetaParts(task: GenerationTask): TaskMetaPart[] {
 }
 
 export function formatTaskError(error: string): string {
-  return error.toLowerCase();
+  return error;
 }
 
 export function getTaskStatusMetaMessage(
