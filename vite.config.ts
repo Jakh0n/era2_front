@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -15,4 +16,8 @@ export default defineConfig({
     },
   },
   plugins: [viteReact(), tailwindcss(), tsConfigPaths({ projects: ["./tsconfig.json"] })],
+  test: {
+    environment: "node",
+    include: ["src/**/*.test.ts"],
+  },
 });
