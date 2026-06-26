@@ -8,23 +8,17 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { GENERATION_TASK_SEED } from "@/entities/generation-task";
+import {
+  buildHydratePayload,
+  readPersistedState,
+  writePersistedState,
+} from "../lib/queuePersistence";
 import type { QueueAction } from "./queueActions";
 import { createQueueEngine, type QueueEngine } from "./queueEngine";
 import { queueReducer } from "./queueReducer";
 import { initialQueueState, type QueueState } from "./queueState";
 
-const STORAGE_KEY = "era2_generation_queue";
 const INIT_DELAY_MS = 600;
-
-interface PersistedQueueState {
-  tasks: Array<
-    Omit<QueueState["tasks"][number], "createdAt"> & { createdAt: string }
-  >;
-  filter?: QueueState["filter"];
-  sort?: QueueState["sort"];
-  search?: QueueState["search"];
-}
 
 export interface QueueContextValue {
   state: QueueState;
@@ -36,67 +30,6 @@ export interface QueueContextValue {
 }
 
 export const QueueContext = createContext<QueueContextValue | null>(null);
-
-function cloneSeedTasks() {
-  return GENERATION_TASK_SEED.map((task) => ({
-    ...task,
-    createdAt: new Date(task.createdAt),
-  }));
-}
-
-function normalizeRestoredTasks(
-  tasks: PersistedQueueState["tasks"],
-): PersistedQueueState["tasks"] {
-  return tasks.map((task) => {
-    if (task.status !== "running") return task;
-
-    return {
-      ...task,
-      status: "queued",
-      progress: 0,
-      eta: task.eta,
-      queuePosition: task.queuePosition,
-    };
-  });
-}
-
-function readPersistedState(): PersistedQueueState | null {
-  if (typeof window === "undefined") return null;
-
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
-
-  return JSON.parse(raw) as PersistedQueueState;
-}
-
-function writePersistedState(state: QueueState): void {
-  if (typeof window === "undefined") return;
-
-  const payload: PersistedQueueState = {
-    tasks: state.tasks.map((task) => ({
-      ...task,
-      createdAt: task.createdAt.toISOString(),
-    })),
-    filter: state.filter,
-    sort: state.sort,
-    search: state.search,
-  };
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-}
-
-function buildHydratePayload(source: PersistedQueueState | null) {
-  if (!source) {
-    return { tasks: cloneSeedTasks() };
-  }
-
-  return {
-    tasks: normalizeRestoredTasks(source.tasks),
-    filter: source.filter,
-    sort: source.sort,
-    search: source.search,
-  };
-}
 
 export function QueueProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(queueReducer, initialQueueState);
@@ -124,7 +57,8 @@ export function QueueProvider({ children }: { children: ReactNode }) {
         dispatch({ type: "HYDRATE", payload: buildHydratePayload(persisted) });
         setLoadError(null);
       } catch {
-        setLoadError("Не удалось загрузить очередь генераций");
+        dispatch({ type: "HYDRATE", payload: buildHydratePayload(null) });
+        setLoadError(null);
       } finally {
         if (attemptId === initAttemptRef.current) {
           setIsLoading(false);
