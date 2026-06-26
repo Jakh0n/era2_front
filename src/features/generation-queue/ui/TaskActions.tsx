@@ -9,6 +9,7 @@ import {
 } from "@/shared/ui/dropdown-menu";
 import { cn } from "@/shared/lib/utils";
 import { getTaskActionVisibility } from "../lib/taskRules";
+import { queueTheme } from "../lib/queueTheme";
 
 export interface TaskActionsProps {
   status: TaskStatus;
@@ -19,11 +20,9 @@ export interface TaskActionsProps {
   className?: string;
 }
 
-const iconButtonClass =
-  "size-8 shrink-0 rounded-[8px] border border-[#2A221E] bg-[#141110] text-[#C8BEB6] hover:text-[#F6EFE9] hover:border-[#2D2420] hover:bg-[#1A1614]";
+const iconButtonClass = queueTheme.iconButton;
 
-const accentActionButtonClass =
-  "size-8 shrink-0 rounded-[8px] border border-[#2A221E] bg-[#141110] text-[#FF7A3D] hover:text-[#FFB27A] hover:border-[#2D2420] hover:bg-[#1A1614]";
+const accentActionButtonClass = queueTheme.accentIconButton;
 
 export function TaskActions({
   status,
@@ -91,10 +90,10 @@ export function TaskActions({
 
         <DropdownMenuContent
           align="end"
-          className="min-w-[10rem] border-[#2D2420] bg-[#141110] text-[#F6EFE9]"
+          className={cn("min-w-[10rem]", queueTheme.dropdownShell)}
         >
           <DropdownMenuItem
-            className="cursor-pointer text-[#FF5F57] focus:bg-[#39180A] focus:text-[#FF5F57]"
+            className="cursor-pointer text-era-destructive focus:bg-era-accent-soft focus:text-era-destructive"
             onClick={onDelete}
           >
             Удалить

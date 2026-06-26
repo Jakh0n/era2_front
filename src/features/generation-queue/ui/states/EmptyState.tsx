@@ -1,5 +1,6 @@
 import { Inbox, SearchX } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
+import { queueTheme } from "../lib/queueTheme";
 
 export type EmptyStateVariant = "empty" | "filtered";
 
@@ -31,20 +32,20 @@ export function EmptyState({ variant, className }: EmptyStateProps) {
     <div
       className={cn(
         "flex flex-col items-center justify-center rounded-2xl border border-dashed",
-        "border-[#2A221E] bg-[#141110]/60 px-6 py-16 text-center",
+        "border-era-line bg-era-bg-1/60 px-6 py-16 text-center",
         className,
       )}
     >
       <span
         className={cn(
           "mb-4 inline-flex size-12 items-center justify-center rounded-2xl",
-          "border border-[#2A221E] bg-[#1A1614] text-[#8A7F78]",
+          "border border-era-line bg-era-bg-2 text-era-fg-mute",
         )}
       >
         <Icon className="size-5" />
       </span>
-      <h3 className="text-lg font-medium text-[#F6EFE9]">{title}</h3>
-      <p className="mt-2 max-w-sm text-[14px] text-[#8A7F78]">{description}</p>
+      <h3 className="text-lg font-medium text-era-fg">{title}</h3>
+      <p className="mt-2 max-w-sm text-[14px] text-era-fg-mute">{description}</p>
     </div>
   );
 }

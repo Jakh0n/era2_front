@@ -11,7 +11,7 @@ import { statusBarShellClass, TaskPreview } from "./taskItemShared";
 function StatusBarSpinner({ className }: { className?: string }) {
   return (
     <Loader2
-      className={cn("size-4 shrink-0 animate-spin text-[#E85420]", className)}
+      className={cn("size-4 shrink-0 animate-spin text-era-accent", className)}
       aria-hidden
     />
   );
@@ -22,7 +22,7 @@ function MiniTaskRow({ task }: { task: GenerationTask }) {
     <div className="flex items-center gap-2.5 min-h-[40px]">
       <TaskPreview task={task} className="size-8 rounded-lg" />
       <div className="min-w-0 flex-1 space-y-1.5">
-        <p className="truncate text-[13px] font-medium text-[#F6EFE9]">{task.prompt}</p>
+        <p className="truncate text-[13px] font-medium text-era-fg">{task.prompt}</p>
         <ProgressBar
           value={task.progress}
           showPercent={false}
@@ -30,7 +30,7 @@ function MiniTaskRow({ task }: { task: GenerationTask }) {
           barClassName="h-0.5"
         />
       </div>
-      <span className="w-9 shrink-0 text-right font-mono text-[12px] tabular-nums text-[#8A7F78]">
+      <span className="w-9 shrink-0 text-right font-mono text-[12px] tabular-nums text-era-fg-mute">
         {task.progress}%
       </span>
     </div>
@@ -42,12 +42,12 @@ function SingleTaskCard({ task, onOpenQueue }: { task: GenerationTask; onOpenQue
     <button
       type="button"
       onClick={onOpenQueue}
-      className={cn(statusBarShellClass, "w-full p-4 text-left hover:border-[#2D2420]")}
+      className={cn(statusBarShellClass, "w-full p-4 text-left hover:border-era-form-border")}
     >
       <div className="flex items-start gap-3">
         <StatusBarSpinner />
         <div className="min-w-0 flex-1 space-y-2">
-          <p className="truncate text-[14px] font-medium text-[#F6EFE9]">
+          <p className="truncate text-[14px] font-medium text-era-fg">
             {TYPE_LABELS[task.type]} · {task.model}
           </p>
           <ProgressBar value={task.progress} barClassName="h-1" />
@@ -80,33 +80,33 @@ function MultiTaskPanel({
         className={cn(
           statusBarShellClass,
           "inline-flex items-center gap-2 px-4 py-2.5",
-          "font-mono text-[13px] tabular-nums text-[#F6EFE9]",
-          "hover:border-[#2D2420]",
+          "font-mono text-[13px] tabular-nums text-era-fg",
+          "hover:border-era-form-border",
         )}
       >
         <StatusBarSpinner className="size-3.5" />
         {activeCount} генераций · {averageProgress}%
-        <ChevronUp className="size-4 text-[#8A7F78]" />
+        <ChevronUp className="size-4 text-era-fg-mute" />
       </button>
     );
   }
 
   return (
     <div className={cn(statusBarShellClass, "w-full overflow-hidden lg:w-[360px]")}>
-      <div className="flex items-start justify-between gap-3 border-b border-[#2A221E] px-4 py-3">
+      <div className="flex items-start justify-between gap-3 border-b border-era-line px-4 py-3">
         <button
           type="button"
           onClick={onOpenQueue}
           className="min-w-0 flex-1 text-left"
         >
-          <p className="text-[14px] font-medium leading-snug text-[#F6EFE9]">
+          <p className="text-[14px] font-medium leading-snug text-era-fg">
             Генерации идут · {activeCount} активны · {averageProgress}%
           </p>
         </button>
         <button
           type="button"
           onClick={onToggleCollapse}
-          className="shrink-0 rounded-[8px] p-1 text-[#8A7F78] hover:bg-[#1A1614] hover:text-[#F6EFE9]"
+          className="shrink-0 rounded-[8px] p-1 text-era-fg-mute hover:bg-era-bg-2 hover:text-era-fg"
           aria-label="Свернуть"
         >
           <ChevronDown className="size-4" />
@@ -119,14 +119,14 @@ function MultiTaskPanel({
         ))}
       </div>
 
-      <div className="border-t border-[#2A221E] px-4 py-3">
+      <div className="border-t border-era-line px-4 py-3">
         <Link
           to="/queue"
           onClick={(event) => {
             event.preventDefault();
             onOpenQueue();
           }}
-          className="inline-flex text-[13px] font-medium text-[#FF7A3D] hover:text-[#FFB27A]"
+          className="inline-flex text-[13px] font-medium text-era-accent-2 hover:text-era-accent-hi"
         >
           Открыть очередь →
         </Link>

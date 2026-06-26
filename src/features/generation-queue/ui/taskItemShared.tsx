@@ -3,6 +3,7 @@ import type { GenType, GenerationTask } from "@/entities/generation-task";
 import { Placeholder } from "@/shared/ui/era";
 import { cn } from "@/shared/lib/utils";
 import { getTaskMetaParts, formatTaskError } from "../lib/taskRules";
+import { queueTheme } from "../lib/queueTheme";
 import { ProgressBar } from "./ProgressBar";
 import { StatusBadge } from "./StatusBadge";
 import { TaskActions } from "./TaskActions";
@@ -26,13 +27,9 @@ const TYPE_ICONS: Record<GenType, typeof MessageSquare> = {
   audio: Mic,
 };
 
-export const taskItemShellClass =
-  "rounded-2xl border border-[#2A221E] bg-[#141110] transition-colors hover:border-[#2D2420]";
+export const taskItemShellClass = queueTheme.cardShell;
 
-export const statusBarShellClass = cn(
-  taskItemShellClass,
-  "shadow-[0_12px_40px_rgba(0,0,0,0.45)]",
-);
+export const statusBarShellClass = queueTheme.statusBarShell;
 
 export function TaskPreview({
   task,
@@ -57,7 +54,7 @@ export function TaskPreview({
     <span
       className={cn(
         "inline-flex size-11 shrink-0 items-center justify-center rounded-xl",
-        "border border-[rgba(232,84,32,0.18)] bg-[rgba(232,84,32,0.1)] text-[#E85420]",
+        queueTheme.typeIconShell,
         className,
       )}
     >
@@ -76,12 +73,12 @@ export function TaskModelPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#C8BEB6]",
+        "inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-era-fg-dim",
         className,
       )}
     >
       <span
-        className="size-1.5 shrink-0 rounded-full bg-[#E85420]"
+        className="size-1.5 shrink-0 rounded-full bg-era-accent"
         aria-hidden
       />
       {model}
@@ -91,7 +88,7 @@ export function TaskModelPill({
 
 function MetaDot() {
   return (
-    <span className="text-[#5A504A]" aria-hidden>
+    <span className="text-era-fg-low" aria-hidden>
       ·
     </span>
   );
@@ -109,7 +106,7 @@ export function TaskMetaLine({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[#8A7F78]",
+        "flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-era-fg-mute",
         className,
       )}
     >
@@ -134,7 +131,7 @@ export function TaskPrompt({
   return (
     <p
       className={cn(
-        "truncate text-[15px] font-medium leading-snug text-[#F6EFE9]",
+        "truncate text-[15px] font-medium leading-snug text-era-fg",
         className,
       )}
       title={prompt}
@@ -154,7 +151,7 @@ export function TaskErrorText({
   if (!error) return null;
 
   return (
-    <p className={cn("text-[13px] text-[#FF5F57]/90", className)}>
+    <p className={cn("text-[13px] text-era-destructive/90", className)}>
       {formatTaskError(error)}
     </p>
   );
@@ -162,7 +159,7 @@ export function TaskErrorText({
 
 export function TaskCanceledText({ className }: { className?: string }) {
   return (
-    <p className={cn("text-[13px] text-[#5A504A]", className)}>
+    <p className={cn("text-[13px] text-era-fg-low", className)}>
       отменено пользователем
     </p>
   );
@@ -188,7 +185,7 @@ export function TaskProgressPercent({
   return (
     <span
       className={cn(
-        "font-mono text-[13px] tabular-nums text-[#E85420]",
+        "font-mono text-[13px] tabular-nums text-era-accent",
         className,
       )}
     >

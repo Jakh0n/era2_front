@@ -12,6 +12,7 @@ import {
 import { cn } from "@/shared/lib/utils";
 import { SEARCH_DEBOUNCE_MS } from "../lib/queueConstants";
 import { FILTER_OPTIONS } from "../lib/queueLabels";
+import { queueTheme } from "../lib/queueTheme";
 import { isQueueSort, type QueueSort, type QueueStatusFilter } from "../lib/queueTypes";
 
 export interface QueueToolbarProps {
@@ -60,7 +61,7 @@ export function QueueToolbar({
               onClick={() => onFilterChange(option.value)}
               className={cn(
                 filter === option.value &&
-                  "bg-[#39180A] border-[#E85420] text-[#FF7A3D]",
+                  "bg-era-accent-soft border-era-accent text-era-accent-2",
               )}
             >
               {option.label}
@@ -71,16 +72,13 @@ export function QueueToolbar({
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#8A7F78]" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-era-fg-mute" />
           <Input
             type="search"
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
             placeholder="Поиск по промпту"
-            className={cn(
-              "h-9 rounded-full border-[#2D2420] bg-[#141110] pl-9",
-              "text-[#F6EFE9] placeholder:text-[#8A7F78]",
-            )}
+            className={cn("h-9 pl-9", queueTheme.inputShell)}
           />
         </div>
 
@@ -91,14 +89,11 @@ export function QueueToolbar({
           }}
         >
           <SelectTrigger
-            className={cn(
-              "h-9 w-full rounded-full border-[#2D2420] bg-[#141110] sm:w-[200px]",
-              "text-[#F6EFE9]",
-            )}
+            className={cn("h-9 w-full sm:w-[200px]", queueTheme.inputShell)}
           >
             <SelectValue placeholder="Сортировка" />
           </SelectTrigger>
-          <SelectContent className="border-[#2D2420] bg-[#141110] text-[#F6EFE9]">
+          <SelectContent className={queueTheme.dropdownShell}>
             <SelectItem value="newest">Сначала новые</SelectItem>
             <SelectItem value="oldest">Сначала старые</SelectItem>
           </SelectContent>

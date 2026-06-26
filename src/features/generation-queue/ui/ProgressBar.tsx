@@ -24,7 +24,7 @@ export function ProgressBar({
       {showPercent && (
         <span
           className={cn(
-            "shrink-0 font-mono text-[12px] tabular-nums text-[#8A7F78]",
+            "shrink-0 font-mono text-[12px] tabular-nums text-era-fg-mute",
             labelClassName,
           )}
         >
@@ -34,7 +34,7 @@ export function ProgressBar({
 
       <div
         className={cn(
-          "relative h-1 flex-1 overflow-hidden rounded-full bg-[#2A221E]",
+          "relative h-1 flex-1 overflow-hidden rounded-full bg-era-line",
           barClassName,
         )}
         role="progressbar"
@@ -43,7 +43,7 @@ export function ProgressBar({
         aria-valuenow={clamped}
       >
         <div
-          className="h-full rounded-full bg-[#E85420] transition-[width] duration-300 ease-out"
+          className="h-full rounded-full bg-era-accent transition-[width] duration-300 ease-out"
           style={{ width: `${clamped}%` }}
         />
       </div>

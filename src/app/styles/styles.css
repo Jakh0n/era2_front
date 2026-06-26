@@ -38,6 +38,22 @@
   --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
+  /* ERA2 raw palette (TZ) → Tailwind: bg-era-bg-1, text-era-fg, … */
+  --color-era-bg: var(--c-bg);
+  --color-era-bg-1: var(--c-bg-1);
+  --color-era-bg-2: var(--c-bg-2);
+  --color-era-bg-3: var(--c-bg-3);
+  --color-era-line: var(--c-line);
+  --color-era-form-border: var(--c-form-border);
+  --color-era-fg: var(--c-fg);
+  --color-era-fg-dim: var(--c-fg-dim);
+  --color-era-fg-mute: var(--c-fg-mute);
+  --color-era-fg-low: var(--c-fg-low);
+  --color-era-accent: var(--c-accent);
+  --color-era-accent-2: var(--c-accent-2);
+  --color-era-accent-soft: var(--c-accent-soft);
+  --color-era-accent-hi: var(--c-accent-hi);
+  --color-era-destructive: var(--c-destructive);
   --font-sans: "Geist Variable", "Manrope", -apple-system, system-ui, sans-serif;
   --font-mono: "Geist Mono Variable", "JetBrains Mono", ui-monospace, monospace;
   --font-heading: var(--font-sans);
@@ -140,6 +156,8 @@
   --c-accent-soft: #fde3d3;
   --c-accent-glow: rgba(232,84,32,0.25);
   --c-accent-hi: #ffb27a;
+  --c-form-border: #c4b5a3;
+  --c-destructive: #ff5f57;
 
   /* Light shadows */
   --shadow-1: 0 1px 2px rgba(20, 11, 5, 0.06), 0 0 0 1px var(--c-line);
@@ -240,6 +258,8 @@
   --c-accent-soft: #3a1a0a;
   --c-accent-glow: rgba(232,84,32,0.35);
   --c-accent-hi: #ffb27a;
+  --c-form-border: #2d2420;
+  --c-destructive: #ff5f57;
 
   /* Dark shadows */
   --shadow-1: 0 1px 0 rgba(255,255,255,0.04) inset, 0 0 0 1px var(--c-line);

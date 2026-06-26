@@ -10,11 +10,11 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
 };
 
 export const STATUS_STYLES: Record<TaskStatus, string> = {
-  queued: "text-[#8A7F78]",
-  running: "text-[#E85420]",
+  queued: "text-era-fg-mute",
+  running: "text-era-accent",
   done: "text-emerald-400",
-  failed: "text-[#FF5F57]",
-  canceled: "text-[#5A504A]",
+  failed: "text-era-destructive",
+  canceled: "text-era-fg-low",
 };
 
 export const TYPE_LABELS: Record<GenType, string> = {
@@ -40,8 +40,8 @@ export const STAT_ITEMS: Array<{
   label: string;
   dotClass: string;
 }> = [
-  { key: "queued", label: STATUS_LABELS.queued, dotClass: "bg-[#8A7F78]" },
-  { key: "running", label: STATUS_LABELS.running, dotClass: "bg-[#E85420]" },
+  { key: "queued", label: STATUS_LABELS.queued, dotClass: "bg-era-fg-mute" },
+  { key: "running", label: STATUS_LABELS.running, dotClass: "bg-era-accent" },
   { key: "done", label: STATUS_LABELS.done, dotClass: "bg-emerald-400" },
-  { key: "failed", label: STATUS_LABELS.failed, dotClass: "bg-[#FF5F57]" },
+  { key: "failed", label: STATUS_LABELS.failed, dotClass: "bg-era-destructive" },
 ];
