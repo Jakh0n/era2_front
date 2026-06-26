@@ -10,10 +10,11 @@
 ## Запуск
 
 ```bash
-npm install
-npm run dev      # http://localhost:8080
-npm test         # vitest — 15 unit-тестов
-npm run build    # production-сборка
+corepack enable
+yarn install
+yarn dev         # http://localhost:8080
+yarn test        # vitest — 18 unit-тестов
+yarn build       # production-сборка
 ```
 
 ---
@@ -147,7 +148,7 @@ entities/
 ## Тесты
 
 ```bash
-npm test
+yarn test
 ```
 
 | Файл                         | Что проверяет                                |
@@ -164,8 +165,8 @@ npm test
 1. `localStorage.removeItem('era2_generation_queue')` + reload → статус-бар появляется внизу
 2. `/queue` — экран очереди, счётчики обновляются
 3. `/queue?failQueueLoad=1` — ошибка + «Повторить»
-4. `npm test` — 15/15
-5. `npm run build` — без ошибок
+4. `yarn test` — 18/18
+5. `yarn build` — без ошибок
 
 ---
 
