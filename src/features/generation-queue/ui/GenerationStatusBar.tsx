@@ -5,7 +5,7 @@ import { Link, useNavigate } from "@/shared/routing";
 import { cn } from "@/shared/lib/utils";
 import { TYPE_LABELS } from "../lib/queueLabels";
 import { queueTheme } from "../lib/queueTheme";
-import { useQueue } from "../model/useQueue";
+import { useQueueStatusBar } from "../model/useQueue";
 import { ProgressBar } from "./ProgressBar";
 import { statusBarShellClass, TaskPreview } from "./taskItemShared";
 
@@ -21,9 +21,14 @@ function StatusBarSpinner({ className }: { className?: string }) {
 function MiniTaskRow({ task }: { task: GenerationTask }) {
   return (
     <div className="flex items-center gap-2.5 min-h-[40px]">
-      <TaskPreview task={task} className={cn("size-8", queueTheme.previewRadiusSm)} />
+      <TaskPreview
+        task={task}
+        className={cn("size-8", queueTheme.previewRadiusSm)}
+      />
       <div className="min-w-0 flex-1 space-y-1.5">
-        <p className="truncate text-[13px] font-medium text-era-fg">{task.prompt}</p>
+        <p className="truncate text-[13px] font-medium text-era-fg">
+          {task.prompt}
+        </p>
         <ProgressBar
           value={task.progress}
           showPercent={false}
@@ -38,7 +43,13 @@ function MiniTaskRow({ task }: { task: GenerationTask }) {
   );
 }
 
-function SingleTaskCard({ task, onOpenQueue }: { task: GenerationTask; onOpenQueue: () => void }) {
+function SingleTaskCard({
+  task,
+  onOpenQueue,
+}: {
+  task: GenerationTask;
+  onOpenQueue: () => void;
+}) {
   return (
     <button
       type="button"
@@ -96,7 +107,9 @@ function MultiTaskPanel({
   }
 
   return (
-    <div className={cn(statusBarShellClass, "w-full overflow-hidden lg:w-[360px]")}>
+    <div
+      className={cn(statusBarShellClass, "w-full overflow-hidden lg:w-[360px]")}
+    >
       <div className="flex items-start justify-between gap-3 border-b border-era-line px-4 py-3">
         <button
           type="button"
@@ -146,7 +159,7 @@ export function GenerationStatusBar() {
     averageProgress,
     statusBarMode,
     statusBarPreviewTasks,
-  } = useQueue();
+  } = useQueueStatusBar();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 

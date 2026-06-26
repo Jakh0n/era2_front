@@ -13,7 +13,10 @@ function parseOptionalDate(value: string | Date | undefined): Date | undefined {
   return value instanceof Date ? value : new Date(value);
 }
 
-function computeDoneDurationSec(task: GenerationTask, now = Date.now()): number {
+function computeDoneDurationSec(
+  task: GenerationTask,
+  now = Date.now(),
+): number {
   if (task.startedAt) {
     return Math.max(1, Math.round((now - task.startedAt.getTime()) / 1000));
   }

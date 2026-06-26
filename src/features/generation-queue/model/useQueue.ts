@@ -1,5 +1,5 @@
-import { useCallback, useContext, useMemo } from "react";
-import { QueueContext } from "./QueueProvider";
+import { useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
 import {
   selectActiveCount,
   selectActiveTasks,
@@ -13,27 +13,59 @@ import {
   type QueueStats,
   type StatusBarMode,
 } from "./selectors";
-import type { QueueSort, QueueStatusFilter } from "../lib/queueTypes";
+import { useQueueStore, initializeQueueFromSeed } from "./queueStore";
 
 export function useQueue() {
-  const context = useContext(QueueContext);
-
-  if (!context) {
-    throw new Error("useQueue must be used within QueueProvider");
-  }
-
-  const { state, dispatch, engineRef, isLoading, loadError, initialize } = context;
-
-  const stats = useMemo(() => selectStats(state.tasks), [state.tasks]);
-  const tasks = useMemo(() => selectFilteredSortedTasks(state), [state]);
-  const activeCount = useMemo(() => selectActiveCount(state.tasks), [state.tasks]);
-  const activeTasks = useMemo(() => selectActiveTasks(state.tasks), [state.tasks]);
-  const averageProgress = useMemo(
-    () => selectAverageActiveProgress(state.tasks),
-    [state.tasks],
+  const {
+    filter,
+    sort,
+    search,
+    isLoading,
+    loadError,
+    tasks: allTasks,
+    setFilter,
+    setSort,
+    setSearch,
+    cancel,
+    retry,
+    deleteTask,
+    clearDone,
+  } = useQueueStore(
+    useShallow((state) => ({
+      filter: state.filter,
+      sort: state.sort,
+      search: state.search,
+      isLoading: state.isLoading,
+      loadError: state.loadError,
+      tasks: state.tasks,
+      setFilter: state.setFilter,
+      setSort: state.setSort,
+      setSearch: state.setSearch,
+      cancel: state.cancel,
+      retry: state.retry,
+      deleteTask: state.deleteTask,
+      clearDone: state.clearDone,
+    })),
   );
-  const runningTasks = useMemo(() => selectRunningTasks(state.tasks), [state.tasks]);
-  const taskCount = useMemo(() => selectTaskCount(state.tasks), [state.tasks]);
+
+  const queueView = useMemo(
+    () => ({ tasks: allTasks, filter, sort, search }),
+    [allTasks, filter, sort, search],
+  );
+
+  const stats = useMemo(() => selectStats(allTasks), [allTasks]);
+  const tasks = useMemo(
+    () => selectFilteredSortedTasks(queueView),
+    [queueView],
+  );
+  const activeCount = useMemo(() => selectActiveCount(allTasks), [allTasks]);
+  const activeTasks = useMemo(() => selectActiveTasks(allTasks), [allTasks]);
+  const averageProgress = useMemo(
+    () => selectAverageActiveProgress(allTasks),
+    [allTasks],
+  );
+  const runningTasks = useMemo(() => selectRunningTasks(allTasks), [allTasks]);
+  const taskCount = useMemo(() => selectTaskCount(allTasks), [allTasks]);
   const statusBarMode = useMemo(
     () => selectStatusBarMode(activeCount, isLoading),
     [activeCount, isLoading],
@@ -42,44 +74,6 @@ export function useQueue() {
     () => selectStatusBarPreviewTasks(activeTasks),
     [activeTasks],
   );
-
-  const setFilter = useCallback(
-    (filter: QueueStatusFilter) => dispatch({ type: "SET_FILTER", filter }),
-    [dispatch],
-  );
-
-  const setSort = useCallback(
-    (sort: QueueSort) => dispatch({ type: "SET_SORT", sort }),
-    [dispatch],
-  );
-
-  const setSearch = useCallback(
-    (search: string) => dispatch({ type: "SET_SEARCH", search }),
-    [dispatch],
-  );
-
-  const cancel = useCallback(
-    (taskId: string) => {
-      engineRef.current?.abortTask(taskId);
-      dispatch({ type: "CANCEL", taskId });
-    },
-    [dispatch, engineRef],
-  );
-
-  const retry = useCallback(
-    (taskId: string) => dispatch({ type: "RETRY", taskId }),
-    [dispatch],
-  );
-
-  const deleteTask = useCallback(
-    (taskId: string) => {
-      engineRef.current?.abortTask(taskId);
-      dispatch({ type: "DELETE", taskId });
-    },
-    [dispatch, engineRef],
-  );
-
-  const clearDone = useCallback(() => dispatch({ type: "CLEAR_DONE" }), [dispatch]);
 
   return {
     tasks,
@@ -91,9 +85,9 @@ export function useQueue() {
     taskCount,
     statusBarMode,
     statusBarPreviewTasks,
-    filter: state.filter,
-    sort: state.sort,
-    search: state.search,
+    filter,
+    sort,
+    search,
     isLoading,
     loadError,
     setFilter,
@@ -103,8 +97,29 @@ export function useQueue() {
     retry,
     deleteTask,
     clearDone,
-    retryLoad: initialize,
+    retryLoad: initializeQueueFromSeed,
   };
 }
+
+/** Status bar reads task progress; derived values computed in useMemo. */
+export function useQueueStatusBar() {
+  const tasks = useQueueStore((state) => state.tasks);
+  const isLoading = useQueueStore((state) => state.isLoading);
+
+  return useMemo(() => {
+    const activeCount = selectActiveCount(tasks);
+    const activeTasks = selectActiveTasks(tasks);
+
+    return {
+      activeCount,
+      activeTasks,
+      averageProgress: selectAverageActiveProgress(tasks),
+      statusBarMode: selectStatusBarMode(activeCount, isLoading),
+      statusBarPreviewTasks: selectStatusBarPreviewTasks(activeTasks),
+    };
+  }, [tasks, isLoading]);
+}
+
+export { initializeQueueFromSeed } from "./queueStore";
 
 export type { QueueStats, StatusBarMode };

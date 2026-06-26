@@ -32,7 +32,7 @@ yarn build       # production-сборка
 | ~15% случайных `failed`                | `FAIL_RATE = 0.15`, три варианта сообщений в `queueConstants.ts`                                                       |
 | video/audio медленнее text/image       | `getProgressStep()` — video/audio +2–6 за тик, text/image +8–15                                                        |
 | Чистка таймеров / cancel без «дотиков» | `engine.stop()` и `abortTask()` перед `CANCEL`                                                                         |
-| Единый источник правды                 | `useReducer` + `QueueProvider`; движок только диспатчит actions                                                        |
+| Единый источник правды                 | Zustand store (`queueStore.ts`) + `queueReducer`; движок только диспатчит actions                                      |
 | Сид 8–12 задач                         | 10 задач в `entities/generation-task/model/seed.ts` (running, queued, done, failed, canceled)                          |
 
 ### §4.1 — Шапка экрана
@@ -60,11 +60,11 @@ yarn build       # production-сборка
 
 ### §4.5 — Состояния экрана
 
-| Состояние                        | Компонент                 | Как проверить                          |
-| -------------------------------- | ------------------------- | -------------------------------------- |
-| Загрузка (~600 ms)               | `states/LoadingState.tsx` | Открыть `/queue`                       |
+| Состояние                        | Компонент                 | Как проверить                                |
+| -------------------------------- | ------------------------- | -------------------------------------------- |
+| Загрузка (~600 ms)               | `states/LoadingState.tsx` | Открыть `/queue`                             |
 | Пустое / нет результатов фильтра | `states/EmptyState.tsx`   | Очистить все задачи, сузить фильтр или поиск |
-| Ошибка загрузки                  | `states/ErrorState.tsx`   | `/queue?failQueueLoad=1` → «Повторить» |
+| Ошибка загрузки                  | `states/ErrorState.tsx`   | `/queue?failQueueLoad=1` → «Повторить»       |
 
 ### §4.6 — Адаптив
 
@@ -102,7 +102,7 @@ pages/        — QueuePage (тонкая обёртка)
 widgets/      — GenerationQueue (композиция экрана)
 features/
   generation-queue/
-    model/    — reducer, engine, selectors, provider, useQueue
+    model/    — store (Zustand), reducer, engine, selectors, runtime hooks
     lib/      — константы, pure-функции движка, persistence, правила UI
     ui/       — презентационные компоненты (без бизнес-логики)
 entities/
@@ -114,6 +114,8 @@ entities/
 | Что проверяю                           | Где смотреть                                      |
 | -------------------------------------- | ------------------------------------------------- |
 | Конечный автомат статусов              | `model/queueReducer.ts`                           |
+| Zustand store + actions                | `model/queueStore.ts`                             |
+| Engine lifecycle / persistence         | `model/useQueueRuntime.ts`                        |
 | Лимит слотов, таймеры, сбои            | `model/queueEngine.ts` + `lib/queueEnginePure.ts` |
 | Счётчики / фильтр / сортировка / поиск | `model/selectors.ts`                              |
 | Персистентность                        | `lib/queuePersistence.ts`                         |
@@ -130,7 +132,7 @@ entities/
 /queue  →  QueuePage  →  GenerationQueue (widget)
 ```
 
-`QueueProvider` оборачивает всё приложение — статус-бар и страница очереди читают один стор.
+`QueueProvider` монтирует runtime (init, engine, persistence) — стор глобальный через Zustand.
 
 ---
 
@@ -176,12 +178,12 @@ yarn test
 
 SPA-роутинг настроен через `vercel.json` в корне frontend — все пути (`/queue`, `/text`, …) отдают `index.html`.
 
-| Настройка Vercel   | Значение     |
-| ------------------ | ------------ |
-| Root Directory     | `.` (frontend) |
-| Framework Preset   | Vite         |
-| Build Command      | `yarn build` |
-| Output Directory   | `dist`       |
+| Настройка Vercel | Значение       |
+| ---------------- | -------------- |
+| Root Directory   | `.` (frontend) |
+| Framework Preset | Vite           |
+| Build Command    | `yarn build`   |
+| Output Directory | `dist`         |
 
 После push выполните redeploy. Прямой переход на `https://<domain>/queue` не должен возвращать 404.
 
