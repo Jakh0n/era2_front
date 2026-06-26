@@ -6,6 +6,7 @@ import {
   selectFilteredSortedTasks,
   selectRunningTasks,
   selectStats,
+  selectTaskCount,
   type QueueStats,
 } from "./selectors";
 import type { QueueSort, QueueStatusFilter } from "./queueState";
@@ -27,6 +28,7 @@ export function useQueue() {
     [state.tasks],
   );
   const runningTasks = useMemo(() => selectRunningTasks(state.tasks), [state.tasks]);
+  const taskCount = useMemo(() => selectTaskCount(state.tasks), [state.tasks]);
 
   const setFilter = useCallback(
     (filter: QueueStatusFilter) => dispatch({ type: "SET_FILTER", filter }),
@@ -72,6 +74,7 @@ export function useQueue() {
     activeCount,
     averageProgress,
     runningTasks,
+    taskCount,
     filter: state.filter,
     sort: state.sort,
     search: state.search,

@@ -44,12 +44,19 @@ function matchesSearch(task: GenerationTask, query: string): boolean {
   return task.prompt.toLowerCase().includes(normalized);
 }
 
-function matchesFilter(task: GenerationTask, filter: QueueStatusFilter): boolean {
+function matchesFilter(
+  task: GenerationTask,
+  filter: QueueStatusFilter,
+): boolean {
   if (filter === "all") return true;
   return task.status === filter;
 }
 
-function compareByCreatedAt(a: GenerationTask, b: GenerationTask, sort: QueueSort): number {
+function compareByCreatedAt(
+  a: GenerationTask,
+  b: GenerationTask,
+  sort: QueueSort,
+): number {
   const delta = a.createdAt.getTime() - b.createdAt.getTime();
   return sort === "newest" ? -delta : delta;
 }
@@ -57,7 +64,8 @@ function compareByCreatedAt(a: GenerationTask, b: GenerationTask, sort: QueueSor
 export function selectFilteredSortedTasks(state: QueueState): GenerationTask[] {
   return state.tasks
     .filter(
-      (task) => matchesFilter(task, state.filter) && matchesSearch(task, state.search),
+      (task) =>
+        matchesFilter(task, state.filter) && matchesSearch(task, state.search),
     )
     .sort((a, b) => compareByCreatedAt(a, b, state.sort));
 }
@@ -66,4 +74,8 @@ export function selectRunningTasks(tasks: GenerationTask[]): GenerationTask[] {
   return tasks
     .filter((task) => task.status === "running")
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+}
+
+export function selectTaskCount(tasks: GenerationTask[]): number {
+  return tasks.length;
 }

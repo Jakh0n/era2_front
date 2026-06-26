@@ -17,6 +17,7 @@ import VideoGenerationPage from "@/pages/VideoGenerationPage";
 import AudioGenerationPage from "@/pages/AudioGenerationPage";
 import NanoBananaPage from "@/pages/NanoBananaPage";
 import ToolPage from "@/pages/ToolPage";
+import QueuePage from "@/pages/QueuePage";
 import NotFound from "@/pages/NotFound";
 
 const routes: Record<string, React.ComponentType> = {
@@ -29,6 +30,7 @@ const routes: Record<string, React.ComponentType> = {
   "/studios": StudiosPage,
   "/toolkit": ToolkitPage,
   "/history": HistoryPage,
+  "/queue": QueuePage,
   "/pricing": PricingPage,
   "/auth": AuthPage,
   "/tools/text-generation": TextGenerationPage,
