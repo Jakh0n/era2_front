@@ -31,7 +31,7 @@ export function QueueToolbar({
   className,
 }: QueueToolbarProps) {
   return (
-    <div className={cn("-mx-1 overflow-x-auto px-1 pb-0.5 scrollbar-hide", className)}>
+    <div className={cn("-mx-1 overflow-x-auto px-1 pb-0.5 scrollbar-hide md:mx-0 md:px-0", className)}>
       <div className="flex w-max items-center gap-2">
         {FILTER_OPTIONS.map((option) => {
           const isActive = filter === option.value;

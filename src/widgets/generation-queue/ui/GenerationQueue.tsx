@@ -9,7 +9,7 @@ import {
   TaskListItem,
   useQueue,
 } from "@/features/generation-queue";
-import { cn } from "@/shared/lib/utils";
+import { queueTheme } from "@/features/generation-queue/lib/queueTheme";
 
 function GenerationQueueContent() {
   const {
@@ -38,11 +38,15 @@ function GenerationQueueContent() {
   }
 
   if (loadError) {
-    return <ErrorState message={loadError} onRetry={retryLoad} />;
+    return (
+      <div className={queueTheme.pageShell}>
+        <ErrorState message={loadError} onRetry={retryLoad} />
+      </div>
+    );
   }
 
   return (
-    <div className={cn("mx-auto w-full max-w-6xl space-y-6")}>
+    <div className={queueTheme.pageShell}>
       <QueueHeader doneCount={stats.done} onClearDone={clearDone} />
       <QueueStatsCards stats={stats} />
       <QueueToolbar

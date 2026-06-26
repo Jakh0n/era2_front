@@ -12,6 +12,8 @@
  *   destructive    → text-era-destructive
  */
 export const queueTheme = {
+  /** Queue page / loading / error shell */
+  pageShell: "mx-auto w-full max-w-6xl space-y-6 px-4 pt-6 pb-4 md:px-6",
   cardShell:
     "rounded-[16px] border border-era-line bg-era-bg-1 transition-colors hover:border-era-form-border",
   cardShellActive:

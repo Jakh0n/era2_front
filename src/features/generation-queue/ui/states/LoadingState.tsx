@@ -48,7 +48,7 @@ function StatSkeleton() {
 
 function ToolbarSkeleton() {
   return (
-    <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scrollbar-hide">
+    <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scrollbar-hide md:mx-0 md:px-0">
       <div className="flex w-max items-center gap-2">
         {["w-12", "w-24", "w-14", "w-16", "w-16"].map((width, index) => (
           <Skeleton
@@ -188,7 +188,7 @@ function TaskListItemSkeleton() {
 export function LoadingState({ className }: LoadingStateProps) {
   return (
     <div
-      className={cn("mx-auto w-full max-w-6xl space-y-6", className)}
+      className={cn(queueTheme.pageShell, className)}
       aria-busy="true"
       aria-live="polite"
     >
