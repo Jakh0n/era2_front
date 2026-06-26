@@ -45,7 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         <main
           className={cn(
-            "transition-all duration-300",
+            "min-w-0 transition-all duration-300",
             !isFullWidth && (sidebarCollapsed ? "lg:pl-14" : "lg:pl-[200px]"),
           )}
         >
