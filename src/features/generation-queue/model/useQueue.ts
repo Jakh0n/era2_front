@@ -2,6 +2,7 @@ import { useCallback, useContext, useMemo } from "react";
 import { QueueContext } from "./QueueProvider";
 import {
   selectActiveCount,
+  selectActiveTasks,
   selectAverageActiveProgress,
   selectFilteredSortedTasks,
   selectRunningTasks,
@@ -23,6 +24,7 @@ export function useQueue() {
   const stats = useMemo(() => selectStats(state.tasks), [state.tasks]);
   const tasks = useMemo(() => selectFilteredSortedTasks(state), [state]);
   const activeCount = useMemo(() => selectActiveCount(state.tasks), [state.tasks]);
+  const activeTasks = useMemo(() => selectActiveTasks(state.tasks), [state.tasks]);
   const averageProgress = useMemo(
     () => selectAverageActiveProgress(state.tasks),
     [state.tasks],
@@ -72,6 +74,7 @@ export function useQueue() {
     tasks,
     stats,
     activeCount,
+    activeTasks,
     averageProgress,
     runningTasks,
     taskCount,

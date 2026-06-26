@@ -76,6 +76,16 @@ export function selectRunningTasks(tasks: GenerationTask[]): GenerationTask[] {
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
+export function selectActiveTasks(tasks: GenerationTask[]): GenerationTask[] {
+  return tasks
+    .filter((task) => task.status === "queued" || task.status === "running")
+    .sort((a, b) => {
+      if (a.status === "running" && b.status !== "running") return -1;
+      if (b.status === "running" && a.status !== "running") return 1;
+      return a.createdAt.getTime() - b.createdAt.getTime();
+    });
+}
+
 export function selectTaskCount(tasks: GenerationTask[]): number {
   return tasks.length;
 }

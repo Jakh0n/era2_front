@@ -1,4 +1,4 @@
-import { Download, MoreHorizontal, RotateCw, X } from "lucide-react";
+import { ArrowDownToLine, MoreHorizontal, RotateCw, X } from "lucide-react";
 import type { TaskStatus } from "@/entities/generation-task";
 import { Button } from "@/shared/ui/button";
 import {
@@ -19,7 +19,10 @@ export interface TaskActionsProps {
 }
 
 const iconButtonClass =
-  "size-8 shrink-0 rounded-lg border border-[#2A221E] bg-[#141110] text-[#C8BEB6] hover:text-[#F6EFE9] hover:border-[#2D2420] hover:bg-[#1A1614]";
+  "size-8 shrink-0 rounded-[8px] border border-[#2A221E] bg-[#141110] text-[#C8BEB6] hover:text-[#F6EFE9] hover:border-[#2D2420] hover:bg-[#1A1614]";
+
+const accentActionButtonClass =
+  "size-8 shrink-0 rounded-[8px] border border-[#2A221E] bg-[#141110] text-[#FF7A3D] hover:text-[#FFB27A] hover:border-[#2D2420] hover:bg-[#1A1614]";
 
 export function TaskActions({
   status,
@@ -53,11 +56,11 @@ export function TaskActions({
           type="button"
           variant="ghost"
           size="icon"
-          className={iconButtonClass}
+          className={accentActionButtonClass}
           aria-label="Повторить"
           onClick={onRetry}
         >
-          <RotateCw className="size-4" />
+          <RotateCw className="size-4" strokeWidth={1.75} />
         </Button>
       )}
 
@@ -66,11 +69,11 @@ export function TaskActions({
           type="button"
           variant="ghost"
           size="icon"
-          className={iconButtonClass}
+          className={accentActionButtonClass}
           aria-label="Скачать"
           onClick={onDownload}
         >
-          <Download className="size-4" />
+          <ArrowDownToLine className="size-4" strokeWidth={1.75} />
         </Button>
       )}
 

@@ -4,7 +4,6 @@ import {
   ErrorState,
   LoadingState,
   QueueHeader,
-  QueueProvider,
   QueueStatsCards,
   QueueToolbar,
   TaskListItem,
@@ -78,9 +77,5 @@ function GenerationQueueContent() {
 }
 
 export function GenerationQueue() {
-  return (
-    <QueueProvider>
-      <GenerationQueueContent />
-    </QueueProvider>
-  );
+  return <GenerationQueueContent />;
 }
