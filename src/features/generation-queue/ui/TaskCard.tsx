@@ -1,14 +1,14 @@
 import { cn } from "@/shared/lib/utils";
-import { ProgressBar } from "./ProgressBar";
 import { StatusBadge } from "./StatusBadge";
-import { TaskActions } from "./TaskActions";
 import {
-  TaskCanceledText,
-  TaskErrorText,
   TaskItemProps,
   TaskMetaLine,
   TaskPreview,
   TaskPrompt,
+  TaskProgressPercent,
+  TaskRunningProgress,
+  TaskStatusMessages,
+  TaskItemActions,
   taskItemShellClass,
 } from "./taskItemShared";
 
@@ -22,61 +22,49 @@ export function TaskCard({
   onDelete,
   className,
 }: TaskCardProps) {
+  const callbacks = { onCancel, onRetry, onDownload, onDelete };
   const isRunning = task.status === "running";
 
   return (
     <article
       className={cn(
         taskItemShellClass,
-        "flex flex-col gap-3 p-4 lg:hidden",
+        "flex flex-col gap-3 p-4 min-[1024px]:hidden",
         className,
       )}
     >
       <div className="flex items-start gap-3">
         <TaskPreview task={task} />
         <div className="min-w-0 flex-1 space-y-2">
-          <TaskPrompt prompt={task.prompt} className="whitespace-normal line-clamp-2 lg:truncate" />
+          <TaskPrompt
+            prompt={task.prompt}
+            className="whitespace-normal line-clamp-2 lg:truncate"
+          />
           <TaskMetaLine task={task} />
         </div>
       </div>
 
-      {task.status === "failed" && <TaskErrorText error={task.error} />}
-      {task.status === "canceled" && <TaskCanceledText />}
+      <TaskStatusMessages task={task} />
 
       {isRunning && (
         <div className="space-y-2">
-          <ProgressBar value={task.progress} showPercent={false} />
+          <TaskRunningProgress task={task} />
           <div className="flex items-center justify-between text-[13px]">
             <StatusBadge status="running" />
-            <span className="font-mono tabular-nums text-[#E85420]">{task.progress}%</span>
+            <TaskProgressPercent progress={task.progress} />
           </div>
         </div>
       )}
 
-      {!isRunning && (
-        <div className="flex items-center justify-between gap-3">
-          <StatusBadge status={task.status} />
-          <TaskActions
-            status={task.status}
-            onCancel={onCancel}
-            onRetry={onRetry}
-            onDownload={onDownload}
-            onDelete={onDelete}
-          />
-        </div>
-      )}
-
-      {isRunning && (
-        <div className="flex justify-end">
-          <TaskActions
-            status={task.status}
-            onCancel={onCancel}
-            onRetry={onRetry}
-            onDownload={onDownload}
-            onDelete={onDelete}
-          />
-        </div>
-      )}
+      <div
+        className={cn(
+          "flex gap-3",
+          isRunning ? "justify-end" : "items-center justify-between",
+        )}
+      >
+        {!isRunning && <StatusBadge status={task.status} />}
+        <TaskItemActions task={task} callbacks={callbacks} />
+      </div>
     </article>
   );
 }

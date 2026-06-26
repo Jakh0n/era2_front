@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
 import { cn } from "@/shared/lib/utils";
+import { getTaskActionVisibility } from "../lib/taskRules";
 
 export interface TaskActionsProps {
   status: TaskStatus;
@@ -32,9 +33,7 @@ export function TaskActions({
   onDelete,
   className,
 }: TaskActionsProps) {
-  const showCancel = status === "queued" || status === "running";
-  const showRetry = status === "failed" || status === "canceled";
-  const showDownload = status === "done";
+  const { showCancel, showRetry, showDownload } = getTaskActionVisibility(status);
 
   return (
     <div className={cn("flex items-center gap-1.5", className)}>

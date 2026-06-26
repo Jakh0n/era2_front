@@ -8,17 +8,16 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { INIT_DELAY_MS } from "../lib/queueConstants";
 import {
-  buildHydratePayload,
-  readPersistedState,
-  writePersistedState,
-} from "../lib/queuePersistence";
+  initializeQueueState,
+  QUEUE_LOAD_ERROR_MESSAGE,
+} from "../lib/queueInit";
+import { writePersistedState } from "../lib/queuePersistence";
 import type { QueueAction } from "./queueActions";
 import { createQueueEngine, type QueueEngine } from "./queueEngine";
 import { queueReducer } from "./queueReducer";
 import { initialQueueState, type QueueState } from "./queueState";
-
-const INIT_DELAY_MS = 600;
 
 export interface QueueContextValue {
   state: QueueState;
@@ -53,12 +52,13 @@ export function QueueProvider({ children }: { children: ReactNode }) {
       if (attemptId !== initAttemptRef.current) return;
 
       try {
-        const persisted = readPersistedState();
-        dispatch({ type: "HYDRATE", payload: buildHydratePayload(persisted) });
+        const payload = initializeQueueState();
+        dispatch({ type: "HYDRATE", payload });
         setLoadError(null);
-      } catch {
-        dispatch({ type: "HYDRATE", payload: buildHydratePayload(null) });
-        setLoadError(null);
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : QUEUE_LOAD_ERROR_MESSAGE;
+        setLoadError(message);
       } finally {
         if (attemptId === initAttemptRef.current) {
           setIsLoading(false);

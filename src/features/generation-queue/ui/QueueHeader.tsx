@@ -11,6 +11,7 @@ import {
 } from "@/shared/ui/alert-dialog";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/lib/utils";
+import { canClearDoneTasks } from "../lib/taskRules";
 
 export interface QueueHeaderProps {
   doneCount: number;
@@ -19,7 +20,7 @@ export interface QueueHeaderProps {
 }
 
 export function QueueHeader({ doneCount, onClearDone, className }: QueueHeaderProps) {
-  const canClear = doneCount > 0;
+  const canClear = canClearDoneTasks(doneCount);
 
   return (
     <header

@@ -1,6 +1,7 @@
 export { QueueProvider } from "./model/QueueProvider";
 export { useQueue } from "./model/useQueue";
-export type { QueueStats } from "./model/selectors";
+export type { QueueStats, StatusBarMode } from "./model/selectors";
+export type { QueueSort, QueueStatusFilter } from "./lib/queueTypes";
 
 export { QueueHeader } from "./ui/QueueHeader";
 export { QueueStats as QueueStatsCards } from "./ui/QueueStats";

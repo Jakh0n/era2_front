@@ -10,17 +10,9 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { cn } from "@/shared/lib/utils";
-import type { QueueSort, QueueStatusFilter } from "../model/queueState";
-
-const SEARCH_DEBOUNCE_MS = 300;
-
-const FILTER_OPTIONS: Array<{ value: QueueStatusFilter; label: string }> = [
-  { value: "all", label: "Все" },
-  { value: "queued", label: "В очереди" },
-  { value: "running", label: "Идёт" },
-  { value: "done", label: "Готово" },
-  { value: "failed", label: "Ошибка" },
-];
+import { SEARCH_DEBOUNCE_MS } from "../lib/queueConstants";
+import { FILTER_OPTIONS } from "../lib/queueLabels";
+import { isQueueSort, type QueueSort, type QueueStatusFilter } from "../lib/queueTypes";
 
 export interface QueueToolbarProps {
   filter: QueueStatusFilter;
@@ -92,7 +84,12 @@ export function QueueToolbar({
           />
         </div>
 
-        <Select value={sort} onValueChange={(value) => onSortChange(value as QueueSort)}>
+        <Select
+          value={sort}
+          onValueChange={(value) => {
+            if (isQueueSort(value)) onSortChange(value);
+          }}
+        >
           <SelectTrigger
             className={cn(
               "h-9 w-full rounded-full border-[#2D2420] bg-[#141110] sm:w-[200px]",

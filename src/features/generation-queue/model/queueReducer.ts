@@ -1,11 +1,8 @@
 import type { GenerationTask } from "@/entities/generation-task";
+import { clampProgress } from "../lib/clampProgress";
 import type { HydratedTask, QueueAction } from "./queueActions";
 import type { QueueState } from "./queueState";
 import { initialQueueState } from "./queueState";
-
-function clampProgress(value: number): number {
-  return Math.min(100, Math.max(0, value));
-}
 
 function parseCreatedAt(value: string | Date): Date {
   return value instanceof Date ? value : new Date(value);

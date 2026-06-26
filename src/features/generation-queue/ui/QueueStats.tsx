@@ -1,27 +1,17 @@
-import type { QueueStats as QueueStatsData } from "../model/selectors";
 import { cn } from "@/shared/lib/utils";
+import { STAT_ITEMS } from "../lib/queueLabels";
+import type { QueueStats as QueueStatsData } from "../lib/queueTypes";
 
 export interface QueueStatsProps {
   stats: QueueStatsData;
   className?: string;
 }
 
-const STAT_ITEMS: Array<{
-  key: keyof QueueStatsData;
-  label: string;
-  dotClass: string;
-}> = [
-  { key: "queued", label: "В очереди", dotClass: "bg-[#8A7F78]" },
-  { key: "running", label: "Идёт", dotClass: "bg-[#E85420]" },
-  { key: "done", label: "Готово", dotClass: "bg-emerald-400" },
-  { key: "failed", label: "Ошибка", dotClass: "bg-[#FF5F57]" },
-];
-
 export function QueueStats({ stats, className }: QueueStatsProps) {
   return (
     <div
       className={cn(
-        "grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4",
+        "grid grid-cols-2 gap-3 min-[1024px]:grid-cols-4 min-[1024px]:gap-4",
         className,
       )}
     >

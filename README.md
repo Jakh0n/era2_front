@@ -7,31 +7,73 @@ npm install
 npm run dev
 ```
 
+## Архитектура (FSD)
+
+```
+app/          — QueueProvider + GenerationStatusBar (глобально), роутинг
+pages/        — QueuePage (тонкая обёртка)
+widgets/      — GenerationQueue (композиция экрана)
+features/
+  generation-queue/
+    model/    — reducer, engine, selectors, persistence, useQueue
+    lib/      — константы, чистые функции, лейблы, правила UI
+    ui/       — презентационные компоненты (без бизнес-логики)
+entities/
+  generation-task/ — типы домена + стартовый сид
+```
+
+**Импорты:** снаружи слайса — только через `@/features/generation-queue` (`index.ts`). Deep-import (`@/features/generation-queue/ui/...`) запрещён.
+
+**Слои ответственности (карта ревью из ТЗ):**
+
+| Что                                  | Где                                               |
+| ------------------------------------ | ------------------------------------------------- |
+| Конечный автомат статусов            | `model/queueReducer.ts`                           |
+| Лимит слотов, таймеры, сбои          | `model/queueEngine.ts` + `lib/queueEnginePure.ts` |
+| Счётчики / фильтр / сортировка       | `model/selectors.ts`                              |
+| Константы движка                     | `lib/queueConstants.ts`                           |
+| Персистентность                      | `lib/queuePersistence.ts`                         |
+| Правила отображения (действия, мета) | `lib/taskRules.ts`                                |
+| Вёрстка                              | `ui/`                                             |
+| Сборка экрана                        | `widgets/generation-queue/ui/GenerationQueue.tsx` |
+
+## Роутинг
+
+Используется лёгкий клиентский роутер (`shared/routing`): `Record<path, Component>` в `app/router/index.tsx`.
+
+- `/queue` → `QueuePage` → виджет `GenerationQueue`
+- `GenerationStatusBar` смонтирован в `App.tsx` поверх всех страниц и ведёт на `/queue` по клику (пока есть `queued` / `running` задачи)
+
+`QueueProvider` оборачивает всё приложение, чтобы статус-бар и страница очереди читали один стор.
+
+### Ошибка загрузки (§4.5)
+
+Для демо сбоя инициализации откройте `/queue?failQueueLoad=1` — появится `ErrorState` с кнопкой «Повторить». Уберите query-параметр и нажмите «Повторить» для успешной загрузки.
+
 ## Персистентность (§4.7)
 
-Состояние очереди сохраняется в `localStorage` под ключом `era2_generation_queue`.
+Ключ `localStorage`: `era2_generation_queue`.
 
-**Что сохраняется:**
+**Сохраняется:** задачи + UI-настройки (фильтр, сортировка, поиск).
 
-- список задач (`tasks`);
-- UI-настройки: фильтр (`filter`), сортировка (`sort`), поиск (`search`).
+**Восстановление:** `QueueProvider` → `readPersistedState()` → `HYDRATE` в редьюсер. Нет данных — стартовый сид (`GENERATION_TASK_SEED`).
 
-**Восстановление при загрузке:**
+**Повреждённые данные:** невалидный JSON/схема → ключ удаляется, fallback на сид.
 
-1. `QueueProvider` читает `localStorage` после короткой задержки (имитация загрузки).
-2. Данные передаются в редьюсер через действие `HYDRATE`.
-3. Если ключа нет — подставляется стартовый сид (`GENERATION_TASK_SEED`).
+### Почему `running` → `queued` при перезагрузке
 
-**Повреждённые данные:**
+Тики прогресса — `setTimeout` в памяти вкладки. После reload интервалы и слоты теряются, продолжить «середину» генерации нельзя. При гидратации `running` переводятся в `queued` с `progress: 0`; движок подхватывает их заново по FIFO (`MAX_CONCURRENT = 2`).
 
-Если JSON не парсится или не проходит валидацию схемы, запись удаляется из `localStorage` и используется стартовый сид — экран не падает в error-state.
+Логика: `lib/queuePersistence.ts` → `normalizeRestoredTasks`.
 
-**Почему `running` → `queued` при восстановлении:**
+## Константы движка
 
-Прогресс и таймеры движка живут только в памяти вкладки (`setInterval` / `setTimeout`). После перезагрузки страницы нет способа продолжить «середину» генерации — интервалы сброшены, слоты неизвестны. Поэтому задачи со статусом `running` при гидратации переводятся в `queued` с `progress: 0`; движок заново подхватит их по FIFO в рамках `MAX_CONCURRENT = 2`.
-
-Логика: `features/generation-queue/lib/queuePersistence.ts` → `normalizeRestoredTasks`.
+| Константа        | Значение                 | Файл                    |
+| ---------------- | ------------------------ | ----------------------- |
+| `MAX_CONCURRENT` | 2                        | `lib/queueConstants.ts` |
+| `FAIL_RATE`      | 0.15                     | `lib/queueConstants.ts` |
+| `TICK_MS`        | `{ min: 400, max: 700 }` | `lib/queueConstants.ts` |
 
 ## Шрифты
 
-Основной шрифт — **Geist** / **Geist Mono** (`@fontsource-variable/geist`).
+Основной — **Geist** / **Geist Mono** (`@fontsource-variable/geist`).

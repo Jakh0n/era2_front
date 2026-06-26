@@ -1,5 +1,8 @@
 import type { GenerationTask } from "@/entities/generation-task";
+import { STATUS_BAR_PREVIEW_LIMIT } from "../lib/queueConstants";
 import type { QueueSort, QueueState, QueueStatusFilter } from "./queueState";
+
+export type StatusBarMode = "hidden" | "single" | "multi";
 
 export interface QueueStats {
   queued: number;
@@ -88,4 +91,20 @@ export function selectActiveTasks(tasks: GenerationTask[]): GenerationTask[] {
 
 export function selectTaskCount(tasks: GenerationTask[]): number {
   return tasks.length;
+}
+
+export function selectStatusBarMode(
+  activeCount: number,
+  isLoading: boolean,
+): StatusBarMode {
+  if (isLoading || activeCount === 0) return "hidden";
+  if (activeCount === 1) return "single";
+  return "multi";
+}
+
+export function selectStatusBarPreviewTasks(
+  tasks: GenerationTask[],
+  limit: number = STATUS_BAR_PREVIEW_LIMIT,
+): GenerationTask[] {
+  return tasks.slice(0, limit);
 }

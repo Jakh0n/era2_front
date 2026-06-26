@@ -1,90 +1,39 @@
-import type { GenType, GenerationTask } from "@/entities/generation-task";
+import type { GenerationTask } from "@/entities/generation-task";
 import type { QueueAction } from "./queueActions";
+import { MAX_CONCURRENT } from "../lib/queueConstants";
+import {
+  computeNextProgress,
+  pickFailMessage,
+  pickTasksToStart,
+  randomTickDelay,
+  shouldFail,
+  type RandomSource,
+} from "../lib/queueEnginePure";
 
-export const MAX_CONCURRENT = 2;
-
-export const TICK_DELAY_MIN_MS = 400;
-export const TICK_DELAY_MAX_MS = 700;
-
-export const FAIL_RATE = 0.15;
-
-export const FAIL_MESSAGES = [
-  "Недостаточно кредитов",
-  "Превышено время ожидания",
-  "Модель временно недоступна",
-] as const;
-
-export type RandomSource = () => number;
+export type { RandomSource } from "../lib/queueEnginePure";
+export {
+  MAX_CONCURRENT,
+  FAIL_RATE,
+  TICK_MS,
+  FAIL_MESSAGES,
+} from "../lib/queueConstants";
+export {
+  countRunningTasks,
+  getQueuedFifo,
+  getAvailableSlots,
+  pickTasksToStart,
+  getProgressStep,
+  shouldFail,
+  pickFailMessage,
+  computeNextProgress,
+  randomTickDelay,
+} from "../lib/queueEnginePure";
 
 export interface QueueEngineOptions {
   dispatch: (action: QueueAction) => void;
   getTasks: () => GenerationTask[];
   random?: RandomSource;
   maxConcurrent?: number;
-}
-
-export function randomTickDelay(random: RandomSource = Math.random): number {
-  const span = TICK_DELAY_MAX_MS - TICK_DELAY_MIN_MS + 1;
-  return TICK_DELAY_MIN_MS + Math.floor(random() * span);
-}
-
-export function countRunningTasks(tasks: GenerationTask[]): number {
-  return tasks.filter((task) => task.status === "running").length;
-}
-
-export function getQueuedFifo(tasks: GenerationTask[]): GenerationTask[] {
-  return tasks
-    .filter((task) => task.status === "queued")
-    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-}
-
-export function getAvailableSlots(
-  tasks: GenerationTask[],
-  maxConcurrent: number = MAX_CONCURRENT,
-): number {
-  return Math.max(0, maxConcurrent - countRunningTasks(tasks));
-}
-
-export function pickTasksToStart(
-  tasks: GenerationTask[],
-  maxConcurrent: number = MAX_CONCURRENT,
-): string[] {
-  const slots = getAvailableSlots(tasks, maxConcurrent);
-  return getQueuedFifo(tasks)
-    .slice(0, slots)
-    .map((task) => task.id);
-}
-
-export function getProgressStep(
-  type: GenType,
-  random: RandomSource = Math.random,
-): number {
-  const roll = random();
-
-  if (type === "video" || type === "audio") {
-    return 2 + Math.floor(roll * 5);
-  }
-
-  return 8 + Math.floor(roll * 8);
-}
-
-export function shouldFail(
-  random: RandomSource = Math.random,
-  rate: number = FAIL_RATE,
-): boolean {
-  return random() < rate;
-}
-
-export function pickFailMessage(random: RandomSource = Math.random): string {
-  const index = Math.floor(random() * FAIL_MESSAGES.length);
-  return FAIL_MESSAGES[index] ?? FAIL_MESSAGES[0];
-}
-
-export function computeNextProgress(
-  task: GenerationTask,
-  random: RandomSource = Math.random,
-): number {
-  return Math.min(100, task.progress + getProgressStep(task.type, random));
 }
 
 type TimerId = ReturnType<typeof setTimeout>;

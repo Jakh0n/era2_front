@@ -7,10 +7,13 @@ import {
   selectFilteredSortedTasks,
   selectRunningTasks,
   selectStats,
+  selectStatusBarMode,
+  selectStatusBarPreviewTasks,
   selectTaskCount,
   type QueueStats,
+  type StatusBarMode,
 } from "./selectors";
-import type { QueueSort, QueueStatusFilter } from "./queueState";
+import type { QueueSort, QueueStatusFilter } from "../lib/queueTypes";
 
 export function useQueue() {
   const context = useContext(QueueContext);
@@ -31,6 +34,14 @@ export function useQueue() {
   );
   const runningTasks = useMemo(() => selectRunningTasks(state.tasks), [state.tasks]);
   const taskCount = useMemo(() => selectTaskCount(state.tasks), [state.tasks]);
+  const statusBarMode = useMemo(
+    () => selectStatusBarMode(activeCount, isLoading),
+    [activeCount, isLoading],
+  );
+  const statusBarPreviewTasks = useMemo(
+    () => selectStatusBarPreviewTasks(activeTasks),
+    [activeTasks],
+  );
 
   const setFilter = useCallback(
     (filter: QueueStatusFilter) => dispatch({ type: "SET_FILTER", filter }),
@@ -78,6 +89,8 @@ export function useQueue() {
     averageProgress,
     runningTasks,
     taskCount,
+    statusBarMode,
+    statusBarPreviewTasks,
     filter: state.filter,
     sort: state.sort,
     search: state.search,
@@ -94,4 +107,4 @@ export function useQueue() {
   };
 }
 
-export type { QueueStats };
+export type { QueueStats, StatusBarMode };

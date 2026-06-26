@@ -2,12 +2,10 @@ import { Image as ImageIcon, MessageSquare, Mic, Video } from "lucide-react";
 import type { GenType, GenerationTask } from "@/entities/generation-task";
 import { Placeholder } from "@/shared/ui/era";
 import { cn } from "@/shared/lib/utils";
-import {
-  formatCredits,
-  formatDoneDuration,
-  formatEta,
-  formatQueuePosition,
-} from "../lib/formatEta";
+import { getTaskMetaParts, formatTaskError } from "../lib/taskRules";
+import { ProgressBar } from "./ProgressBar";
+import { StatusBadge } from "./StatusBadge";
+import { TaskActions } from "./TaskActions";
 
 export interface TaskItemCallbacks {
   onCancel?: () => void;
@@ -27,6 +25,14 @@ const TYPE_ICONS: Record<GenType, typeof MessageSquare> = {
   video: Video,
   audio: Mic,
 };
+
+export const taskItemShellClass =
+  "rounded-2xl border border-[#2A221E] bg-[#141110] transition-colors hover:border-[#2D2420]";
+
+export const statusBarShellClass = cn(
+  taskItemShellClass,
+  "shadow-[0_12px_40px_rgba(0,0,0,0.45)]",
+);
 
 export function TaskPreview({
   task,
@@ -98,19 +104,7 @@ export function TaskMetaLine({
   task: GenerationTask;
   className?: string;
 }) {
-  const metaParts: string[] = [];
-
-  if (task.status === "queued" && task.queuePosition !== undefined) {
-    metaParts.push(formatQueuePosition(task.queuePosition));
-  } else if (task.status === "running" && task.eta !== undefined) {
-    metaParts.push(formatEta(task.eta));
-  } else if (task.status === "done" && task.eta !== undefined) {
-    metaParts.push(formatDoneDuration(task.eta));
-  }
-
-  if (task.credits !== undefined) {
-    metaParts.push(formatCredits(task.credits));
-  }
+  const metaParts = getTaskMetaParts(task);
 
   return (
     <div
@@ -161,7 +155,7 @@ export function TaskErrorText({
 
   return (
     <p className={cn("text-[13px] text-[#FF5F57]/90", className)}>
-      {error.toLowerCase()}
+      {formatTaskError(error)}
     </p>
   );
 }
@@ -174,5 +168,73 @@ export function TaskCanceledText({ className }: { className?: string }) {
   );
 }
 
-export const taskItemShellClass =
-  "rounded-2xl border border-[#2A221E] bg-[#141110] transition-colors hover:border-[#2D2420]";
+export function TaskStatusMessages({ task }: { task: GenerationTask }) {
+  if (task.status === "failed") {
+    return <TaskErrorText error={task.error} />;
+  }
+  if (task.status === "canceled") {
+    return <TaskCanceledText />;
+  }
+  return null;
+}
+
+export function TaskProgressPercent({
+  progress,
+  className,
+}: {
+  progress: number;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "font-mono text-[13px] tabular-nums text-[#E85420]",
+        className,
+      )}
+    >
+      {progress}%
+    </span>
+  );
+}
+
+export function TaskRunningProgress({
+  task,
+  className,
+  barClassName,
+}: {
+  task: GenerationTask;
+  className?: string;
+  barClassName?: string;
+}) {
+  if (task.status !== "running") return null;
+
+  return (
+    <ProgressBar
+      value={task.progress}
+      showPercent={false}
+      className={className}
+      barClassName={barClassName}
+    />
+  );
+}
+
+export function TaskItemActions({
+  task,
+  callbacks,
+  className,
+}: {
+  task: GenerationTask;
+  callbacks: TaskItemCallbacks;
+  className?: string;
+}) {
+  return (
+    <TaskActions
+      status={task.status}
+      onCancel={callbacks.onCancel}
+      onRetry={callbacks.onRetry}
+      onDownload={callbacks.onDownload}
+      onDelete={callbacks.onDelete}
+      className={className}
+    />
+  );
+}

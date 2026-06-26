@@ -1,21 +1,12 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
-import type { GenerationTask, GenType } from "@/entities/generation-task";
+import type { GenerationTask } from "@/entities/generation-task";
 import { Link, useNavigate } from "@/shared/routing";
 import { cn } from "@/shared/lib/utils";
+import { TYPE_LABELS } from "../lib/queueLabels";
 import { useQueue } from "../model/useQueue";
 import { ProgressBar } from "./ProgressBar";
-import { TaskPreview } from "./taskItemShared";
-
-const TYPE_LABELS: Record<GenType, string> = {
-  text: "Текст",
-  image: "Изображение",
-  video: "Видео",
-  audio: "Аудио",
-};
-
-const shellClass =
-  "rounded-2xl border border-[#2A221E] bg-[#141110] shadow-[0_12px_40px_rgba(0,0,0,0.45)]";
+import { statusBarShellClass, TaskPreview } from "./taskItemShared";
 
 function StatusBarSpinner({ className }: { className?: string }) {
   return (
@@ -51,7 +42,7 @@ function SingleTaskCard({ task, onOpenQueue }: { task: GenerationTask; onOpenQue
     <button
       type="button"
       onClick={onOpenQueue}
-      className={cn(shellClass, "w-full p-4 text-left transition-colors hover:border-[#2D2420]")}
+      className={cn(statusBarShellClass, "w-full p-4 text-left hover:border-[#2D2420]")}
     >
       <div className="flex items-start gap-3">
         <StatusBarSpinner />
@@ -87,10 +78,10 @@ function MultiTaskPanel({
         type="button"
         onClick={onToggleCollapse}
         className={cn(
-          shellClass,
+          statusBarShellClass,
           "inline-flex items-center gap-2 px-4 py-2.5",
           "font-mono text-[13px] tabular-nums text-[#F6EFE9]",
-          "transition-colors hover:border-[#2D2420]",
+          "hover:border-[#2D2420]",
         )}
       >
         <StatusBarSpinner className="size-3.5" />
@@ -101,7 +92,7 @@ function MultiTaskPanel({
   }
 
   return (
-    <div className={cn(shellClass, "w-full overflow-hidden lg:w-[360px]")}>
+    <div className={cn(statusBarShellClass, "w-full overflow-hidden lg:w-[360px]")}>
       <div className="flex items-start justify-between gap-3 border-b border-[#2A221E] px-4 py-3">
         <button
           type="button"
@@ -123,7 +114,7 @@ function MultiTaskPanel({
       </div>
 
       <div className="space-y-3 px-4 py-3">
-        {tasks.slice(0, 3).map((task) => (
+        {tasks.map((task) => (
           <MiniTaskRow key={task.id} task={task} />
         ))}
       </div>
@@ -145,11 +136,17 @@ function MultiTaskPanel({
 }
 
 export function GenerationStatusBar() {
-  const { activeCount, activeTasks, averageProgress, isLoading } = useQueue();
+  const {
+    activeCount,
+    activeTasks,
+    averageProgress,
+    statusBarMode,
+    statusBarPreviewTasks,
+  } = useQueue();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 
-  const visible = !isLoading && activeCount > 0;
+  const visible = statusBarMode !== "hidden";
   const openQueue = () => navigate("/queue");
 
   return (
@@ -167,13 +164,13 @@ export function GenerationStatusBar() {
       )}
     >
       <div className="mx-auto w-full max-w-lg lg:mx-0 lg:max-w-none lg:w-auto">
-        {activeCount === 1 ? (
-          <SingleTaskCard task={activeTasks[0]!} onOpenQueue={openQueue} />
-        ) : activeCount > 1 ? (
+        {statusBarMode === "single" && activeTasks[0] ? (
+          <SingleTaskCard task={activeTasks[0]} onOpenQueue={openQueue} />
+        ) : statusBarMode === "multi" ? (
           <MultiTaskPanel
             activeCount={activeCount}
             averageProgress={averageProgress}
-            tasks={activeTasks}
+            tasks={statusBarPreviewTasks}
             collapsed={collapsed}
             onToggleCollapse={() => setCollapsed((value) => !value)}
             onOpenQueue={openQueue}

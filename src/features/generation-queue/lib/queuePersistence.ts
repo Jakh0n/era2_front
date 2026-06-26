@@ -1,7 +1,7 @@
 import { GENERATION_TASK_SEED } from "@/entities/generation-task";
 import type { GenType, TaskStatus } from "@/entities/generation-task";
 import type { QueueHydratePayload, HydratedTask } from "../model/queueActions";
-import type { QueueSort, QueueState, QueueStatusFilter } from "../model/queueState";
+import type { QueueSort, QueueState, QueueStatusFilter } from "../lib/queueTypes";
 
 export const STORAGE_KEY = "era2_generation_queue";
 

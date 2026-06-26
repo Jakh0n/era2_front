@@ -1,4 +1,5 @@
 import { cn } from "@/shared/lib/utils";
+import { clampProgress } from "../lib/clampProgress";
 
 export interface ProgressBarProps {
   /** 0–100 */
@@ -16,7 +17,7 @@ export function ProgressBar({
   barClassName,
   labelClassName,
 }: ProgressBarProps) {
-  const clamped = Math.min(100, Math.max(0, value));
+  const clamped = clampProgress(value);
 
   return (
     <div className={cn("flex items-center gap-3 min-w-0", className)}>
