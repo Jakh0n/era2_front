@@ -9,6 +9,8 @@ import { cn } from "@/shared/lib/utils";
 
 const sidebarPages = ["/text", "/design", "/video", "/audio", "/agents", "/toolkit", "/history", "/queue", "/pricing", "/create"];
 const workspacePages = ["/text", "/design", "/video", "/audio", "/create"];
+/** Pages that define their own horizontal inset (avoids double padding with Layout). */
+const selfPaddedPages = ["/queue", "/history"];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,6 +27,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const showSidebar = isAuthed && sidebarPages.some((p) => location.pathname.startsWith(p));
   const isFullWidth = !showSidebar;
   const isWorkspace = workspacePages.includes(location.pathname);
+  const isSelfPadded = selfPaddedPages.some((p) => location.pathname.startsWith(p));
 
   return (
     <CommandPaletteProvider>
@@ -51,7 +54,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         >
           {isFullWidth ? (
             children
-          ) : isWorkspace ? (
+          ) : isWorkspace || isSelfPadded ? (
             <div className="max-w-full">{children}</div>
           ) : (
             <div className="p-4 md:p-6 max-w-full">{children}</div>

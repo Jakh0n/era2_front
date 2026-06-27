@@ -46,7 +46,7 @@ export function TaskCard({
       {isRunning && <TaskRunningProgress task={task} />}
 
       <div className="flex items-center justify-between gap-3">
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1.5">
           <StatusBadge status={task.status} />
           {isRunning && <TaskProgressPercent progress={task.progress} />}
         </div>

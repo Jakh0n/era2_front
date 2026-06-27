@@ -43,7 +43,7 @@ export function TaskRow({
         </div>
 
         <div className="flex shrink-0 items-center gap-3 pt-0.5">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             {isRunning && <TaskProgressPercent progress={task.progress} />}
             <StatusBadge status={task.status} />
           </div>

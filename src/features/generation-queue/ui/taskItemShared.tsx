@@ -74,7 +74,7 @@ export function TaskModelPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-era-fg-dim",
+        "inline-flex min-w-0 max-w-full items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-era-fg-dim",
         className,
       )}
     >
@@ -82,7 +82,7 @@ export function TaskModelPill({
         className="size-1.5 shrink-0 rounded-full bg-era-accent"
         aria-hidden
       />
-      {model}
+      <span className="truncate">{model}</span>
     </span>
   );
 }
@@ -106,34 +106,32 @@ export function TaskMetaLine({
   const statusMessage = getTaskStatusMetaMessage(task);
 
   return (
-    <div
-      className={cn(
-        "flex min-w-0 flex-nowrap items-center gap-x-1.5 overflow-hidden text-[13px] text-era-fg-mute",
-        className,
-      )}
-    >
-      <TaskModelPill model={task.model} className="shrink-0" />
-      {metaParts.map((part) => (
-        <Fragment key={part.text}>
-          <MetaDot />
-          <span
-            className={cn(
-              "shrink-0",
-              part.mono && "font-mono tabular-nums",
-              part.className,
-            )}
-          >
-            {part.text}
-          </span>
-        </Fragment>
-      ))}
+    <div className={cn("min-w-0 space-y-1", className)}>
+      <div
+        className="flex min-w-0 flex-nowrap items-center gap-x-1.5 overflow-hidden text-[13px] text-era-fg-mute"
+        title={[task.model, ...metaParts.map((part) => part.text)].join(" · ")}
+      >
+        <TaskModelPill model={task.model} className="min-w-0 shrink" />
+        {metaParts.map((part) => (
+          <Fragment key={part.text}>
+            <MetaDot />
+            <span
+              className={cn(
+                "shrink-0",
+                part.mono && "font-mono tabular-nums",
+                part.className,
+              )}
+            >
+              {part.text}
+            </span>
+          </Fragment>
+        ))}
+      </div>
+
       {statusMessage && (
-        <>
-          <MetaDot />
-          <span className="shrink-0 text-[12px] text-era-fg-low">
-            {statusMessage.text}
-          </span>
-        </>
+        <p className="text-[12px] leading-snug break-words text-era-fg-low">
+          {statusMessage.text}
+        </p>
       )}
     </div>
   );
@@ -169,7 +167,7 @@ export function TaskProgressPercent({
   return (
     <span
       className={cn(
-        "inline-block min-w-[3rem] shrink-0 text-right font-mono text-[13px] tabular-nums text-era-accent",
+        "shrink-0 font-mono text-[13px] tabular-nums text-era-accent",
         className,
       )}
     >
