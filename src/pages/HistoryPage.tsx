@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Inbox } from "lucide-react";
-import { HistoryFilters, type HistoryFilter } from "@/components/history/HistoryFilters";
+import {
+  HistoryFilters,
+  type HistoryFilter,
+} from "@/components/history/HistoryFilters";
 import { HistoryCard } from "@/components/history/HistoryCard";
 import { HistoryDetailDialog } from "@/components/history/HistoryDetailDialog";
 import { getHistoryItems, type HistoryItem } from "@/entities/history";
@@ -9,7 +12,8 @@ function pluralizeGenerations(n: number): string {
   const mod10 = n % 10;
   const mod100 = n % 100;
   if (mod10 === 1 && mod100 !== 11) return "генерация";
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "генерации";
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14))
+    return "генерации";
   return "генераций";
 }
 
@@ -53,13 +57,17 @@ const HistoryPage = () => {
   );
 
   const toggleFavorite = (id: string) => {
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, favorite: !i.favorite } : i)));
+    setItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, favorite: !i.favorite } : i)),
+    );
   };
 
   return (
     <div className="min-h-[calc(100vh-var(--header-height,64px))]">
       <div className="max-w-[1200px] mx-auto px-4 pt-6 pb-4">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">История</h1>
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
+          История
+        </h1>
         <p className="text-sm text-muted-foreground mt-1">
           {filtered.length} {pluralizeGenerations(filtered.length)}
         </p>
@@ -75,12 +83,15 @@ const HistoryPage = () => {
               style={{
                 background: "rgba(232,84,32,0.08)",
                 color: "hsl(var(--primary))",
-                border: "1px solid color-mix(in oklab, hsl(var(--primary)) 25%, transparent)",
+                border:
+                  "1px solid color-mix(in oklab, hsl(var(--primary)) 25%, transparent)",
               }}
             >
               <Inbox size={24} strokeWidth={1.8} />
             </div>
-            <h2 className="text-xl font-semibold text-foreground mb-1.5">Здесь пока пусто</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-1.5">
+              Здесь пока пусто
+            </h2>
             <p className="text-sm text-muted-foreground">
               {filter === "favorites"
                 ? "Вы ещё не отметили ничего избранным"

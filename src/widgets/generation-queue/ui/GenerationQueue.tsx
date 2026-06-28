@@ -1,8 +1,8 @@
 import { useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   EmptyState,
   ErrorState,
-  LoadingState,
   QueueHeader,
   QueueStatsCards,
   QueueToolbar,
@@ -10,6 +10,16 @@ import {
   queueTheme,
   useQueue,
 } from "@/features/generation-queue";
+
+const listStagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05 } },
+};
+
+const itemFadeUp = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0 },
+};
 
 function GenerationQueueContent() {
   const {
@@ -19,7 +29,6 @@ function GenerationQueueContent() {
     filter,
     sort,
     search,
-    isLoading,
     loadError,
     setFilter,
     setSort,
@@ -34,10 +43,6 @@ function GenerationQueueContent() {
   useEffect(() => {
     document.title = "ERA2 — Очередь генераций";
   }, []);
-
-  if (isLoading) {
-    return <LoadingState />;
-  }
 
   if (loadError) {
     return (
@@ -63,18 +68,24 @@ function GenerationQueueContent() {
       {tasks.length === 0 ? (
         <EmptyState variant={taskCount === 0 ? "empty" : "filtered"} />
       ) : (
-        <div className="space-y-3">
+        <motion.div
+          className="space-y-3"
+          initial="hidden"
+          animate="show"
+          variants={listStagger}
+        >
           {tasks.map((task) => (
-            <TaskListItem
-              key={task.id}
-              task={task}
-              onCancel={() => cancel(task.id)}
-              onRetry={() => retry(task.id)}
-              onDelete={() => deleteTask(task.id)}
-              onDownload={() => undefined}
-            />
+            <motion.div key={task.id} variants={itemFadeUp}>
+              <TaskListItem
+                task={task}
+                onCancel={() => cancel(task.id)}
+                onRetry={() => retry(task.id)}
+                onDelete={() => deleteTask(task.id)}
+                onDownload={() => undefined}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

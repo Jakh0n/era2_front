@@ -20,7 +20,6 @@ export function useQueue() {
     filter,
     sort,
     search,
-    isLoading,
     loadError,
     tasks: allTasks,
     setFilter,
@@ -35,7 +34,6 @@ export function useQueue() {
       filter: state.filter,
       sort: state.sort,
       search: state.search,
-      isLoading: state.isLoading,
       loadError: state.loadError,
       tasks: state.tasks,
       setFilter: state.setFilter,
@@ -67,8 +65,8 @@ export function useQueue() {
   const runningTasks = useMemo(() => selectRunningTasks(allTasks), [allTasks]);
   const taskCount = useMemo(() => selectTaskCount(allTasks), [allTasks]);
   const statusBarMode = useMemo(
-    () => selectStatusBarMode(activeCount, isLoading),
-    [activeCount, isLoading],
+    () => selectStatusBarMode(activeCount),
+    [activeCount],
   );
   const statusBarPreviewTasks = useMemo(
     () => selectStatusBarPreviewTasks(activeTasks),
@@ -88,7 +86,6 @@ export function useQueue() {
     filter,
     sort,
     search,
-    isLoading,
     loadError,
     setFilter,
     setSort,
@@ -104,7 +101,6 @@ export function useQueue() {
 /** Status bar reads task progress; derived values computed in useMemo. */
 export function useQueueStatusBar() {
   const tasks = useQueueStore((state) => state.tasks);
-  const isLoading = useQueueStore((state) => state.isLoading);
 
   return useMemo(() => {
     const activeCount = selectActiveCount(tasks);
@@ -114,10 +110,10 @@ export function useQueueStatusBar() {
       activeCount,
       activeTasks,
       averageProgress: selectAverageActiveProgress(tasks),
-      statusBarMode: selectStatusBarMode(activeCount, isLoading),
+      statusBarMode: selectStatusBarMode(activeCount),
       statusBarPreviewTasks: selectStatusBarPreviewTasks(activeTasks),
     };
-  }, [tasks, isLoading]);
+  }, [tasks]);
 }
 
 export { initializeQueueFromSeed } from "./queueStore";

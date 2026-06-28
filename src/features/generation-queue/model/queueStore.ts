@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { INIT_DELAY_MS } from "../lib/queueConstants";
 import {
   initializeQueueState,
   QUEUE_LOAD_ERROR_MESSAGE,
@@ -16,7 +15,6 @@ import {
 } from "./queueState";
 
 export interface QueueStore extends QueueState {
-  isLoading: boolean;
   loadError: string | null;
   dispatch: (action: QueueAction) => void;
   setFilter: (filter: QueueStatusFilter) => void;
@@ -37,39 +35,41 @@ function toReducerState(state: QueueStore): QueueState {
   };
 }
 
-let initAttempt = 0;
-
 export function initializeQueueFromSeed(): void {
-  initAttempt += 1;
-  const attemptId = initAttempt;
-
-  useQueueStore.setState({ isLoading: true, loadError: null });
-
-  window.setTimeout(() => {
-    if (attemptId !== initAttempt) return;
-
-    try {
-      const payload = initializeQueueState();
-      useQueueStore.getState().dispatch({ type: "HYDRATE", payload });
-      useQueueStore.setState({ loadError: null });
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : QUEUE_LOAD_ERROR_MESSAGE;
-      useQueueStore.setState({ loadError: message });
-    } finally {
-      if (attemptId === initAttempt) {
-        useQueueStore.setState({ isLoading: false });
-        syncQueueEngine();
-      }
-    }
-  }, INIT_DELAY_MS);
+  try {
+    const payload = initializeQueueState();
+    useQueueStore.getState().dispatch({ type: "HYDRATE", payload });
+    useQueueStore.setState({ loadError: null });
+    syncQueueEngine();
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : QUEUE_LOAD_ERROR_MESSAGE;
+    useQueueStore.setState({ loadError: message });
+  }
 }
+
+function buildBootState(): Pick<QueueStore, keyof QueueState | "loadError"> {
+  try {
+    const payload = initializeQueueState();
+    return {
+      ...queueReducer(initialQueueState, { type: "HYDRATE", payload }),
+      loadError: null,
+    };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : QUEUE_LOAD_ERROR_MESSAGE;
+    return {
+      ...initialQueueState,
+      loadError: message,
+    };
+  }
+}
+
+const bootState = buildBootState();
 
 export const useQueueStore = create<QueueStore>()(
   subscribeWithSelector((set, get) => ({
-    ...initialQueueState,
-    isLoading: true,
-    loadError: null,
+    ...bootState,
 
     dispatch: (action) => {
       set((state) => ({

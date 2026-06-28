@@ -10,13 +10,12 @@ import {
   syncQueueEngine,
 } from "./queueEngineBinding";
 import { createQueueEngine } from "./queueEngine";
-import { initializeQueueFromSeed, useQueueStore } from "./queueStore";
+import { useQueueStore } from "./queueStore";
 
 type PersistSlice = Pick<
   QueueState,
   "tasks" | "filter" | "sort" | "search"
 > & {
-  isLoading: boolean;
   loadError: string | null;
 };
 
@@ -45,10 +44,6 @@ function toPersistPayload(slice: PersistSlice) {
 
 export function useQueueRuntime(): void {
   useEffect(() => {
-    initializeQueueFromSeed();
-  }, []);
-
-  useEffect(() => {
     const engine = createQueueEngine({
       dispatch: (action) => useQueueStore.getState().dispatch(action),
       getTasks: () => useQueueStore.getState().tasks,
@@ -56,6 +51,7 @@ export function useQueueRuntime(): void {
 
     bindQueueEngine(engine);
     engine.start();
+    syncQueueEngine();
 
     return () => {
       engine.stop();
@@ -67,11 +63,10 @@ export function useQueueRuntime(): void {
     return useQueueStore.subscribe(
       (state) => ({
         tasks: state.tasks,
-        isLoading: state.isLoading,
         loadError: state.loadError,
       }),
       (snapshot) => {
-        if (snapshot.isLoading || snapshot.loadError) return;
+        if (snapshot.loadError) return;
         syncQueueEngine();
       },
     );
@@ -84,11 +79,10 @@ export function useQueueRuntime(): void {
         filter: state.filter,
         sort: state.sort,
         search: state.search,
-        isLoading: state.isLoading,
         loadError: state.loadError,
       }),
       (snapshot, previous) => {
-        if (snapshot.isLoading || snapshot.loadError) return;
+        if (snapshot.loadError) return;
 
         const payload = toPersistPayload(snapshot);
         const uiChanged =
@@ -112,7 +106,7 @@ export function useQueueRuntime(): void {
 
     const flushOnExit = () => {
       const state = useQueueStore.getState();
-      if (state.isLoading || state.loadError) return;
+      if (state.loadError) return;
       flushPersistedState(toPersistPayload(state));
     };
 

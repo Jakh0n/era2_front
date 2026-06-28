@@ -11,7 +11,6 @@ export const FAIL_MESSAGES = [
   "Модель временно недоступна",
 ] as const;
 
-export const INIT_DELAY_MS = 600;
 export const SEARCH_DEBOUNCE_MS = 300;
 export const PERSIST_DEBOUNCE_MS = 800;
 export const STATUS_BAR_PREVIEW_LIMIT = 3;

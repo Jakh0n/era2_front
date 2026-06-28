@@ -93,11 +93,8 @@ export function selectTaskCount(tasks: GenerationTask[]): number {
   return tasks.length;
 }
 
-export function selectStatusBarMode(
-  activeCount: number,
-  isLoading: boolean,
-): StatusBarMode {
-  if (isLoading || activeCount === 0) return "hidden";
+export function selectStatusBarMode(activeCount: number): StatusBarMode {
+  if (activeCount === 0) return "hidden";
   if (activeCount === 1) return "single";
   return "multi";
 }
